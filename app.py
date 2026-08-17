@@ -466,7 +466,8 @@ def generate_report(age_m, ht, wt, sex, model, scaler):
     
     age_d = age_m * DAYS_PER_MONTH
     if hfa_ref is not None:
-        hfa_curve = interp_curve(hfa_ref, hfa_pcols, age_d)
+        table_val = age_d if float(hfa_ref.iloc[:, 0].max()) > 120 else age_m
+        hfa_curve = interp_curve(hfa_ref, hfa_pcols, table_val)
         hfa_p = est_percentile(ht, hfa_curve)
     else:
         hfa_curve = {50: ht}
