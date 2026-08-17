@@ -1,0 +1,39 @@
+# ---- Secrets & Credentials (NEVER commit these) ----
+.streamlit/secrets.toml
+service_account.json
+.env
+*.env
+*.key
+*.pem
+
+# ---- Verification & Sensitive Stores ----
+verification_codes.json
+pending_teacher_requests.json
+
+# ---- Virtual Environments ----
+.venv/
+venv/
+ENV/
+env/
+
+# ---- Python Cache ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ---- Temp Files & Generated Artifacts ----
+temp_reports/
+*.tmp
+scratch/
+
+# ---- IDE & OS ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

@@ -1,0 +1,30 @@
+{
+  "teacher": {
+    "password": "f66e5cfbb104c9b9e981eb1c742f7ebb34f76b2cbe92400f34f605c77f2edffe",
+    "fullName": "Class Teacher (Admin)",
+    "role": "Teacher",
+    "childId": "",
+    "email": "mystuntman009@gmail.com"
+  },
+  "parent_c002": {
+    "password": "f47898ce4310d9298dedd01b87ffb52e49e9790fa04d14c2c46d7ec3758ab977",
+    "fullName": "Murugan (Kavya's Parent)",
+    "role": "Parent",
+    "childId": "C002",
+    "email": ""
+  },
+  "parent_c001": {
+    "password": "f47898ce4310d9298dedd01b87ffb52e49e9790fa04d14c2c46d7ec3758ab977",
+    "fullName": "Ramasamy (Arun's Parent)",
+    "role": "Parent",
+    "childId": "C001",
+    "email": ""
+  },
+  "mathiarasu": {
+    "password": "f607da94e75f3db8da9906b4977bdbe9b794fa37c2923e8c9f92016f5d3492ad",
+    "fullName": "mathiarasu",
+    "role": "Teacher",
+    "childId": "",
+    "email": "sachinmurugan94452@gmail.com"
+  }
+}
