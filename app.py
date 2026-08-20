@@ -133,6 +133,18 @@ def get_theme_css(theme: str) -> str:
         color: #38240D !important;
     }
 
+    /* ---- Top Header & Decoration Bar (Light) ---- */
+    header[data-testid="stHeader"],
+    .stAppHeader,
+    div[data-testid="stDecoration"],
+    div[data-testid="stToolbar"],
+    div[data-testid="stStatusWidget"] {
+        background: #fcfaf4 !important;
+        background-color: #fcfaf4 !important;
+        color: #38240D !important;
+        border-bottom: 1px solid rgba(192, 88, 0, 0.15) !important;
+    }
+
     .main .block-container {
         padding-top: 1.8rem;
         padding-bottom: 3rem;
@@ -305,8 +317,18 @@ def get_theme_css(theme: str) -> str:
     .custom-card:hover {
         border-color: #C05800 !important;
     }
-    .custom-card * {
+    .custom-card p, .custom-card strong, .custom-card b {
         color: #38240D !important;
+    }
+    .card-heading {
+        color: #38240D !important;
+        font-weight: 700;
+    }
+    .card-subtext {
+        color: #613b16 !important;
+    }
+    .card-meta, .card-meta span {
+        color: #713600 !important;
     }
     .card-title {
         font-size: 1.2rem;
@@ -338,20 +360,61 @@ def get_theme_css(theme: str) -> str:
 
     /* ---- Badges (Light) ---- */
     .badge {
-        display: inline-block;
-        padding: 0.35rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        display: inline-block !important;
+        padding: 0.35rem 0.75rem !important;
+        border-radius: 9999px !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
     }
-    .badge-healthy { background-color: #e6f4ea !important; color: #137333 !important; border: 1px solid #34a853 !important; }
-    .badge-underweight { background-color: #fef7e0 !important; color: #b06000 !important; border: 1px solid #f9ab00 !important; }
-    .badge-overweight { background-color: #fef0e6 !important; color: #c05800 !important; border: 1px solid #c05800 !important; }
-    .badge-obese { background-color: #fce8e6 !important; color: #c5221f !important; border: 1px solid #ea4335 !important; }
-    .badge-stunted { background-color: #f3e8fd !important; color: #7627bb !important; border: 1px solid #9333ea !important; }
-    .badge-info { background-color: #38240D !important; color: #FDFBD4 !important; }
+    .badge-info, .custom-card .badge-info {
+        background-color: #38240D !important;
+        color: #FDFBD4 !important;
+    }
+    .badge-info *, .custom-card .badge-info * {
+        color: #FDFBD4 !important;
+    }
+    .badge-healthy, .custom-card .badge-healthy {
+        background-color: #e6f4ea !important;
+        color: #137333 !important;
+        border: 1px solid #34a853 !important;
+    }
+    .badge-healthy *, .custom-card .badge-healthy * {
+        color: #137333 !important;
+    }
+    .badge-underweight, .custom-card .badge-underweight {
+        background-color: #fef7e0 !important;
+        color: #b06000 !important;
+        border: 1px solid #f9ab00 !important;
+    }
+    .badge-underweight *, .custom-card .badge-underweight * {
+        color: #b06000 !important;
+    }
+    .badge-overweight, .custom-card .badge-overweight {
+        background-color: #fef0e6 !important;
+        color: #c05800 !important;
+        border: 1px solid #c05800 !important;
+    }
+    .badge-overweight *, .custom-card .badge-overweight * {
+        color: #c05800 !important;
+    }
+    .badge-obese, .custom-card .badge-obese {
+        background-color: #fce8e6 !important;
+        color: #c5221f !important;
+        border: 1px solid #ea4335 !important;
+    }
+    .badge-obese *, .custom-card .badge-obese * {
+        color: #c5221f !important;
+    }
+    .badge-stunted, .custom-card .badge-stunted {
+        background-color: #f3e8fd !important;
+        color: #7627bb !important;
+        border: 1px solid #9333ea !important;
+    }
+    .badge-stunted *, .custom-card .badge-stunted * {
+        color: #7627bb !important;
+    }
 
     .section-header {
         font-size: 1.5rem;
@@ -496,6 +559,18 @@ def get_theme_css(theme: str) -> str:
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
         background: radial-gradient(circle at 50% 0%, #2b1a0d 0%, #170e06 100%) !important;
         color: #FDFBD4 !important;
+    }
+
+    /* ---- Top Header & Decoration Bar (Dark) ---- */
+    header[data-testid="stHeader"],
+    .stAppHeader,
+    div[data-testid="stDecoration"],
+    div[data-testid="stToolbar"],
+    div[data-testid="stStatusWidget"] {
+        background: #170e06 !important;
+        background-color: #170e06 !important;
+        color: #FDFBD4 !important;
+        border-bottom: 1px solid rgba(192, 88, 0, 0.25) !important;
     }
 
     .main .block-container {
@@ -674,8 +749,18 @@ def get_theme_css(theme: str) -> str:
         border-color: #C05800 !important;
         box-shadow: 0 8px 24px rgba(113, 54, 0, 0.25);
     }
-    .custom-card * {
+    .custom-card p, .custom-card strong, .custom-card b {
         color: #FDFBD4 !important;
+    }
+    .card-heading {
+        color: #FDFBD4 !important;
+        font-weight: 700;
+    }
+    .card-subtext {
+        color: #d4c8a8 !important;
+    }
+    .card-meta, .card-meta span {
+        color: #e5d8b8 !important;
     }
     .card-title {
         font-size: 1.2rem;
@@ -705,22 +790,63 @@ def get_theme_css(theme: str) -> str:
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    /* ---- Badges ---- */
+    /* ---- Badges (Dark Mode: High Contrast) ---- */
     .badge {
-        display: inline-block;
-        padding: 0.35rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        display: inline-block !important;
+        padding: 0.35rem 0.75rem !important;
+        border-radius: 9999px !important;
+        font-size: 0.8rem !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
     }
-    .badge-underweight { background-color: rgba(253, 251, 212, 0.18) !important; color: #FDFBD4 !important; border: 1px solid rgba(253, 251, 212, 0.4) !important; }
-    .badge-healthy { background-color: rgba(192, 88, 0, 0.3) !important; color: #FDFBD4 !important; border: 1px solid #C05800 !important; }
-    .badge-overweight { background-color: rgba(224, 110, 20, 0.35) !important; color: #FDFBD4 !important; border: 1px solid #e06d06 !important; }
-    .badge-obese { background-color: rgba(239, 68, 68, 0.25) !important; color: #fecaca !important; border: 1px solid #ef4444 !important; }
-    .badge-stunted { background-color: rgba(113, 54, 0, 0.5) !important; color: #FDFBD4 !important; border: 1px solid #713600 !important; }
-    .badge-info { background-color: #FDFBD4 !important; color: #38240D !important; font-weight: 800 !important; }
+    .badge-info, .custom-card .badge-info {
+        background-color: #FDFBD4 !important;
+        color: #38240D !important;
+    }
+    .badge-info *, .custom-card .badge-info * {
+        color: #38240D !important;
+    }
+    .badge-healthy, .custom-card .badge-healthy {
+        background-color: rgba(192, 88, 0, 0.35) !important;
+        color: #FDFBD4 !important;
+        border: 1px solid #C05800 !important;
+    }
+    .badge-healthy *, .custom-card .badge-healthy * {
+        color: #FDFBD4 !important;
+    }
+    .badge-underweight, .custom-card .badge-underweight {
+        background-color: rgba(253, 251, 212, 0.22) !important;
+        color: #FDFBD4 !important;
+        border: 1px solid rgba(253, 251, 212, 0.5) !important;
+    }
+    .badge-underweight *, .custom-card .badge-underweight * {
+        color: #FDFBD4 !important;
+    }
+    .badge-overweight, .custom-card .badge-overweight {
+        background-color: rgba(224, 110, 20, 0.4) !important;
+        color: #FDFBD4 !important;
+        border: 1px solid #e06d06 !important;
+    }
+    .badge-overweight *, .custom-card .badge-overweight * {
+        color: #FDFBD4 !important;
+    }
+    .badge-obese, .custom-card .badge-obese {
+        background-color: rgba(239, 68, 68, 0.3) !important;
+        color: #fecaca !important;
+        border: 1px solid #ef4444 !important;
+    }
+    .badge-obese *, .custom-card .badge-obese * {
+        color: #fecaca !important;
+    }
+    .badge-stunted, .custom-card .badge-stunted {
+        background-color: rgba(113, 54, 0, 0.6) !important;
+        color: #FDFBD4 !important;
+        border: 1px solid #713600 !important;
+    }
+    .badge-stunted *, .custom-card .badge-stunted * {
+        color: #FDFBD4 !important;
+    }
 
     .section-header {
         font-size: 1.5rem;
@@ -1774,11 +1900,11 @@ def render_about_page():
     col_dev1, col_dev2 = st.columns(2)
     with col_dev1:
         st.markdown("""
-        <div class="custom-card" style="border-top: 4px solid #6366f1; text-align: center; padding: 1.5rem 1rem;">
+        <div class="custom-card" style="border-top: 4px solid #C05800; text-align: center; padding: 1.5rem 1rem;">
             <div style="font-size: 3rem;">👨‍💻</div>
-            <div style="font-size: 1.35rem; font-weight: 800; color: #f8fafc; margin-top: 0.4rem; letter-spacing: 0.02em;">SACHIN M</div>
-            <div style="font-size: 0.88rem; color: #818cf8; font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;">Lead AI Engineer & System Architect</div>
-            <div style="font-size: 0.88rem; color: #94a3b8; margin-top: 0.6rem; line-height: 1.5;">
+            <div class="card-heading" style="font-size: 1.35rem; font-weight: 800; margin-top: 0.4rem; letter-spacing: 0.02em;">SACHIN M</div>
+            <div style="font-size: 0.88rem; color: #C05800; font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;">Lead AI Engineer & System Architect</div>
+            <div class="card-subtext" style="font-size: 0.88rem; margin-top: 0.6rem; line-height: 1.5;">
                 Deep Learning Model Optimization, GrowthNet 2.0 Neural Network, WHO LMS Standards Engine & Backend Systems.
             </div>
             <div style="margin-top: 0.8rem;">
@@ -1789,11 +1915,11 @@ def render_about_page():
 
     with col_dev2:
         st.markdown("""
-        <div class="custom-card" style="border-top: 4px solid #38bdf8; text-align: center; padding: 1.5rem 1rem;">
+        <div class="custom-card" style="border-top: 4px solid #713600; text-align: center; padding: 1.5rem 1rem;">
             <div style="font-size: 3rem;">👨‍💻</div>
-            <div style="font-size: 1.35rem; font-weight: 800; color: #f8fafc; margin-top: 0.4rem; letter-spacing: 0.02em;">VISHAL KANNAN S I</div>
-            <div style="font-size: 0.88rem; color: #38bdf8; font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;">Lead Full-Stack Developer & UI/UX Architect</div>
-            <div style="font-size: 0.88rem; color: #94a3b8; margin-top: 0.6rem; line-height: 1.5;">
+            <div class="card-heading" style="font-size: 1.35rem; font-weight: 800; margin-top: 0.4rem; letter-spacing: 0.02em;">VISHAL KANNAN S I</div>
+            <div style="font-size: 0.88rem; color: #C05800; font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;">Lead Full-Stack Developer & UI/UX Architect</div>
+            <div class="card-subtext" style="font-size: 0.88rem; margin-top: 0.6rem; line-height: 1.5;">
                 Interactive AI Meal Planner, Clinical Pediatric Standards Integration, Streamlit Dashboard UI & Multi-Portal Architecture.
             </div>
             <div style="margin-top: 0.8rem;">
@@ -1817,8 +1943,8 @@ def render_about_page():
     with m_col1:
         st.markdown("""
         <div class="custom-card">
-            <div style="font-weight: 700; color: #818cf8; font-size: 1.05rem;">🧠 PyTorch GrowthNet 2.0 AI Engine</div>
-            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+            <div class="card-heading" style="font-weight: 700; font-size: 1.05rem; color: #C05800 !important;">🧠 PyTorch GrowthNet 2.0 AI Engine</div>
+            <div class="card-subtext" style="font-size: 0.9rem; margin-top: 0.3rem;">
                 4-layer deep neural network trained on 29,000+ pediatric benchmark cases with 9 domain-engineered features achieving <b>99.0% diagnostic test accuracy</b> across all WHO health classifications.
             </div>
         </div>
@@ -1826,8 +1952,8 @@ def render_about_page():
 
         st.markdown("""
         <div class="custom-card">
-            <div style="font-weight: 700; color: #38bdf8; font-size: 1.05rem;">🍽️ Interactive AI Daily Meal Planner</div>
-            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+            <div class="card-heading" style="font-weight: 700; font-size: 1.05rem; color: #C05800 !important;">🍽️ Interactive AI Daily Meal Planner</div>
+            <div class="card-subtext" style="font-size: 0.9rem; margin-top: 0.3rem;">
                 Structured 5-meal daily schedules (Breakfast, Snack, Lunch, Snack, Dinner) tailored to ICMR-NIN RDA 2024, AskNestle, and Harvard Healthy Eating Plate guidelines with Precision Nutrition hand-size portion guides.
             </div>
         </div>
@@ -1835,8 +1961,8 @@ def render_about_page():
 
         st.markdown("""
         <div class="custom-card">
-            <div style="font-weight: 700; color: #34d399; font-size: 1.05rem;">📋 Cumulative Multi-Day Attendance</div>
-            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+            <div class="card-heading" style="font-weight: 700; font-size: 1.05rem; color: #C05800 !important;">📋 Cumulative Multi-Day Attendance</div>
+            <div class="card-subtext" style="font-size: 0.9rem; margin-top: 0.3rem;">
                 Persistent attendance tracking with individual student cumulative percentage scoring, low-attendance alerts (<75%), and academic year reset tools.
             </div>
         </div>
@@ -1845,8 +1971,8 @@ def render_about_page():
     with m_col2:
         st.markdown("""
         <div class="custom-card">
-            <div style="font-weight: 700; color: #f59e0b; font-size: 1.05rem;">🎓 Student Database Management (CRUD)</div>
-            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+            <div class="card-heading" style="font-weight: 700; font-size: 1.05rem; color: #C05800 !important;">🎓 Student Database Management (CRUD)</div>
+            <div class="card-subtext" style="font-size: 0.9rem; margin-top: 0.3rem;">
                 Live Excel & JSON registry synchronization allowing teachers to add, edit, and delete student records with instant roster export.
             </div>
         </div>
@@ -1854,8 +1980,8 @@ def render_about_page():
 
         st.markdown("""
         <div class="custom-card">
-            <div style="font-weight: 700; color: #ec4899; font-size: 1.05rem;">📄 Automated Clinical PDF Reports</div>
-            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+            <div class="card-heading" style="font-weight: 700; font-size: 1.05rem; color: #C05800 !important;">📄 Automated Clinical PDF Reports</div>
+            <div class="card-subtext" style="font-size: 0.9rem; margin-top: 0.3rem;">
                 Instant ReportLab PDF generation for growth analysis curves and downloadable printable 5-meal daily nutrition schedules.
             </div>
         </div>
@@ -1863,8 +1989,8 @@ def render_about_page():
 
         st.markdown("""
         <div class="custom-card">
-            <div style="font-weight: 700; color: #a855f7; font-size: 1.05rem;">💬 Secure Parent-Teacher Messaging</div>
-            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+            <div class="card-heading" style="font-weight: 700; font-size: 1.05rem; color: #C05800 !important;">💬 Secure Parent-Teacher Messaging</div>
+            <div class="card-subtext" style="font-size: 0.9rem; margin-top: 0.3rem;">
                 Direct two-way progress notes and child dietary coordination between class teachers and parents.
             </div>
         </div>
@@ -3098,15 +3224,15 @@ else:
         for m_type, m_val in p_meal_plan["meals"].items():
             icon = p_meal_icons.get(m_type, "🍽️")
             st.markdown(f"""
-            <div class="custom-card" style="margin-bottom: 0.9rem; border-left: 4px solid #38bdf8;">
+            <div class="custom-card" style="margin-bottom: 0.9rem; border-left: 4px solid #C05800;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 1.15rem; font-weight: 700; color: #f8fafc;">{icon} {m_type}: {m_val['name']}</span>
+                    <span class="card-heading" style="font-size: 1.15rem; font-weight: 700;">{icon} {m_type}: {m_val['name']}</span>
                     <span class="badge badge-info">~{m_val['cal']} kcal</span>
                 </div>
-                <div style="color: #94a3b8; font-size: 0.92rem; margin-top: 0.4rem;">
+                <div class="card-subtext" style="font-size: 0.92rem; margin-top: 0.4rem;">
                     {m_val['desc']}
                 </div>
-                <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; font-size: 0.85rem; color: #cbd5e1;">
+                <div class="card-meta" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; font-size: 0.85rem;">
                     <span>✋ <b>Serving Portion:</b> {m_val['hand_portion']}</span>
                     <span>✨ <b>Key Nutrients:</b> {m_val['nutrients']}</span>
                     <span>🥩 <b>Protein:</b> {m_val['p']}g | <b>Carbs:</b> {m_val['c']}g | <b>Fats:</b> {m_val['f']}g</span>
@@ -3130,9 +3256,9 @@ else:
                 st.markdown(f"""
                 <div class="custom-card" style="text-align: center; padding: 1rem 0.8rem;">
                     <div style="font-size: 2rem;">{hicon}</div>
-                    <div style="font-weight: 700; color: #f8fafc; margin-top: 0.3rem;">{hname} = {hnut}</div>
-                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem;">{hexamples}</div>
-                    <div style="font-size: 0.82rem; color: #38bdf8; font-weight: 600; margin-top: 0.5rem; background: rgba(56, 189, 248, 0.1); padding: 4px; border-radius: 6px;">{hserv}</div>
+                    <div class="card-heading" style="font-weight: 700; margin-top: 0.3rem;">{hname} = {hnut}</div>
+                    <div class="card-subtext" style="font-size: 0.8rem; margin-top: 0.2rem;">{hexamples}</div>
+                    <div style="font-size: 0.82rem; color: #C05800; font-weight: 700; margin-top: 0.5rem; background: rgba(192, 88, 0, 0.12); padding: 4px; border-radius: 6px;">{hserv}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
