@@ -127,12 +127,9 @@ def get_theme_css(theme: str) -> str:
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    .stApp {
-        background: linear-gradient(180deg, #fcf9f2 0%, #f4ede0 100%) !important;
+    html, body, [class*="css"], .stApp {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background: linear-gradient(180deg, #fcfaf4 0%, #f4eee2 100%) !important;
         color: #38240D !important;
     }
 
@@ -142,10 +139,97 @@ def get_theme_css(theme: str) -> str:
         max-width: 1200px;
     }
 
+    /* ---- Universal Text & Headings (Light) ---- */
+    h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+        color: #38240D !important;
+        font-weight: 800 !important;
+    }
+    .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown div {
+        color: #38240D !important;
+    }
+
+    /* ---- Form & Input Labels (Light) ---- */
+    label, [data-testid="stWidgetLabel"] label, [data-testid="stWidgetLabel"] p, [data-testid="stWidgetLabel"] span {
+        color: #38240D !important;
+        font-weight: 700 !important;
+        font-size: 0.95rem !important;
+    }
+
+    /* ---- Streamlit Metrics (Light) ---- */
+    [data-testid="stMetricValue"], [data-testid="stMetricValue"] * {
+        color: #C05800 !important;
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+    }
+    [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] * {
+        color: #713600 !important;
+        font-weight: 700 !important;
+        font-size: 0.88rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+    }
+
+    /* ---- Streamlit Tabs (Light) ---- */
+    [data-testid="stTabs"] button[role="tab"] {
+        color: #713600 !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+    }
+    [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+        color: #C05800 !important;
+        border-bottom: 3px solid #C05800 !important;
+        font-weight: 800 !important;
+    }
+    [data-testid="stTabs"] button[role="tab"] p {
+        color: inherit !important;
+    }
+
+    /* ---- Form Inputs & Selectboxes (Light) ---- */
+    input, textarea {
+        background-color: #ffffff !important;
+        color: #38240D !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="input"] {
+        background-color: #ffffff !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 8px !important;
+    }
+    div[data-baseweb="input"] input {
+        color: #38240D !important;
+        background-color: #ffffff !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        color: #38240D !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="select"] span {
+        color: #38240D !important;
+    }
+    div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li {
+        background-color: #ffffff !important;
+        color: #38240D !important;
+    }
+    div[role="radiogroup"] label, div[data-testid="stCheckbox"] label {
+        color: #38240D !important;
+        font-weight: 600 !important;
+    }
+    div[role="radiogroup"] label p, div[data-testid="stCheckbox"] label p {
+        color: #38240D !important;
+        font-weight: 600 !important;
+    }
+
     /* ---- Hero Banner (Light) ---- */
     .hero-banner {
-        background: linear-gradient(135deg, #713600 0%, #a34b00 50%, #C05800 100%);
-        color: #FDFBD4;
+        background: linear-gradient(135deg, #713600 0%, #a34b00 50%, #C05800 100%) !important;
+        color: #FDFBD4 !important;
         padding: 2.2rem 2rem;
         border-radius: 18px;
         box-shadow: 0 15px 28px -5px rgba(113, 54, 0, 0.25);
@@ -169,12 +253,12 @@ def get_theme_css(theme: str) -> str:
         font-size: 2.2rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
-        color: #FDFBD4;
+        color: #FDFBD4 !important;
         letter-spacing: -0.02em;
     }
     .hero-subtitle {
         font-size: 1.05rem;
-        color: #fef8dd;
+        color: #fef8dd !important;
         max-width: 750px;
         line-height: 1.6;
         margin-bottom: 1.2rem;
@@ -182,9 +266,9 @@ def get_theme_css(theme: str) -> str:
 
     /* ---- Metric Cards (Light) ---- */
     .metric-card {
-        background: #ffffff;
-        border: 1px solid rgba(192, 88, 0, 0.22);
-        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.06);
+        background: #ffffff !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.22) !important;
+        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.08) !important;
         border-radius: 14px;
         padding: 1.2rem 1.5rem;
         text-align: center;
@@ -192,39 +276,42 @@ def get_theme_css(theme: str) -> str:
     }
     .metric-card:hover {
         transform: translateY(-3px);
-        border-color: #C05800;
-        box-shadow: 0 8px 20px rgba(113, 54, 0, 0.15);
+        border-color: #C05800 !important;
+        box-shadow: 0 8px 20px rgba(113, 54, 0, 0.15) !important;
     }
     .metric-val {
         font-size: 2rem;
         font-weight: 800;
-        color: #C05800;
+        color: #C05800 !important;
     }
     .metric-lbl {
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #713600;
+        color: #713600 !important;
         font-weight: 700;
     }
 
     /* ---- Custom Cards (Light) ---- */
     .custom-card {
-        background: #ffffff;
-        border: 1px solid rgba(192, 88, 0, 0.2);
+        background: #ffffff !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.22) !important;
         border-radius: 16px;
         padding: 1.4rem;
         margin-bottom: 1.2rem;
-        box-shadow: 0 4px 16px rgba(113, 54, 0, 0.08);
-        color: #38240D;
+        box-shadow: 0 4px 16px rgba(113, 54, 0, 0.08) !important;
+        color: #38240D !important;
     }
     .custom-card:hover {
-        border-color: #C05800;
+        border-color: #C05800 !important;
+    }
+    .custom-card * {
+        color: #38240D !important;
     }
     .card-title {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #38240D;
+        color: #38240D !important;
         margin-bottom: 0.8rem;
         display: flex;
         align-items: center;
@@ -233,23 +320,23 @@ def get_theme_css(theme: str) -> str:
 
     /* ---- Chat Bubbles (Light) ---- */
     .chat-bubble-teacher {
-        background: #fdf6ec;
-        border: 1px solid #713600;
+        background: #fdf6ec !important;
+        border: 1px solid #713600 !important;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
-        color: #38240D;
+        color: #38240D !important;
     }
     .chat-bubble-parent {
-        background: #fef9f0;
-        border: 1px solid #C05800;
+        background: #fef9f0 !important;
+        border: 1px solid #C05800 !important;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
-        color: #38240D;
+        color: #38240D !important;
     }
 
-    /* ---- Badges ---- */
+    /* ---- Badges (Light) ---- */
     .badge {
         display: inline-block;
         padding: 0.35rem 0.75rem;
@@ -259,17 +346,17 @@ def get_theme_css(theme: str) -> str:
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-    .badge-healthy { background-color: #e6f4ea; color: #137333; border: 1px solid #34a853; }
-    .badge-underweight { background-color: #fef7e0; color: #b06000; border: 1px solid #f9ab00; }
-    .badge-overweight { background-color: #fef0e6; color: #c05800; border: 1px solid #c05800; }
-    .badge-obese { background-color: #fce8e6; color: #c5221f; border: 1px solid #ea4335; }
-    .badge-stunted { background-color: #f3e8fd; color: #7627bb; border: 1px solid #9333ea; }
-    .badge-info { background-color: #38240D; color: #FDFBD4; }
+    .badge-healthy { background-color: #e6f4ea !important; color: #137333 !important; border: 1px solid #34a853 !important; }
+    .badge-underweight { background-color: #fef7e0 !important; color: #b06000 !important; border: 1px solid #f9ab00 !important; }
+    .badge-overweight { background-color: #fef0e6 !important; color: #c05800 !important; border: 1px solid #c05800 !important; }
+    .badge-obese { background-color: #fce8e6 !important; color: #c5221f !important; border: 1px solid #ea4335 !important; }
+    .badge-stunted { background-color: #f3e8fd !important; color: #7627bb !important; border: 1px solid #9333ea !important; }
+    .badge-info { background-color: #38240D !important; color: #FDFBD4 !important; }
 
     .section-header {
         font-size: 1.5rem;
         font-weight: 800;
-        color: #38240D;
+        color: #38240D !important;
         margin-top: 1rem;
         margin-bottom: 1.2rem;
         border-left: 5px solid #C05800;
@@ -280,6 +367,34 @@ def get_theme_css(theme: str) -> str:
         border-radius: 12px;
         overflow: hidden;
         border: 1px solid rgba(192, 88, 0, 0.2);
+        background: #ffffff !important;
+    }
+
+    /* ---- Buttons (Light) ---- */
+    button[kind="secondary"] {
+        background-color: #ffffff !important;
+        color: #38240D !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        font-weight: 600 !important;
+    }
+    button[kind="secondary"] p, button[kind="secondary"] div {
+        color: #38240D !important;
+        font-weight: 600 !important;
+    }
+    button[kind="secondary"]:hover {
+        background-color: rgba(192, 88, 0, 0.1) !important;
+        border-color: #C05800 !important;
+        color: #C05800 !important;
+    }
+    button[kind="primary"], button[kind="primaryFormSubmit"] {
+        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
+        color: #FDFBD4 !important;
+        border: 1px solid #713600 !important;
+        font-weight: 700 !important;
+    }
+    button[kind="primary"] p, button[kind="primaryFormSubmit"] p {
+        color: #FDFBD4 !important;
+        font-weight: 700 !important;
     }
 
     /* ---- Sidebar Navigation Alignment (Light) ---- */
@@ -341,7 +456,7 @@ def get_theme_css(theme: str) -> str:
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.12em;
-        color: #713600;
+        color: #713600 !important;
         padding: 0.6rem 0.4rem 0.35rem;
     }
 
@@ -377,11 +492,8 @@ def get_theme_css(theme: str) -> str:
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    .stApp {
+    html, body, [class*="css"], .stApp {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
         background: radial-gradient(circle at 50% 0%, #2b1a0d 0%, #170e06 100%) !important;
         color: #FDFBD4 !important;
     }
@@ -392,10 +504,97 @@ def get_theme_css(theme: str) -> str:
         max-width: 1200px;
     }
 
+    /* ---- Universal Text & Headings (Dark) ---- */
+    h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+        color: #FDFBD4 !important;
+        font-weight: 800 !important;
+    }
+    .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown div {
+        color: #FDFBD4 !important;
+    }
+
+    /* ---- Form & Input Labels (Dark) ---- */
+    label, [data-testid="stWidgetLabel"] label, [data-testid="stWidgetLabel"] p, [data-testid="stWidgetLabel"] span {
+        color: #FDFBD4 !important;
+        font-weight: 700 !important;
+        font-size: 0.95rem !important;
+    }
+
+    /* ---- Streamlit Metrics (Dark) ---- */
+    [data-testid="stMetricValue"], [data-testid="stMetricValue"] * {
+        color: #C05800 !important;
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+        text-shadow: 0 0 12px rgba(192, 88, 0, 0.3) !important;
+    }
+    [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] * {
+        color: #e5d8b8 !important;
+        font-weight: 700 !important;
+        font-size: 0.88rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+    }
+
+    /* ---- Streamlit Tabs (Dark) ---- */
+    [data-testid="stTabs"] button[role="tab"] {
+        color: #e5d8b8 !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+    }
+    [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+        color: #C05800 !important;
+        border-bottom: 3px solid #C05800 !important;
+        font-weight: 800 !important;
+    }
+    [data-testid="stTabs"] button[role="tab"] p {
+        color: inherit !important;
+    }
+
+    /* ---- Form Inputs & Selectboxes (Dark) ---- */
+    input, textarea {
+        background-color: #2b1b0d !important;
+        color: #FDFBD4 !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="input"] {
+        background-color: #2b1b0d !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 8px !important;
+    }
+    div[data-baseweb="input"] input {
+        color: #FDFBD4 !important;
+        background-color: #2b1b0d !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #2b1b0d !important;
+        color: #FDFBD4 !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="select"] span {
+        color: #FDFBD4 !important;
+    }
+    div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li {
+        background-color: #2b1b0d !important;
+        color: #FDFBD4 !important;
+    }
+    div[role="radiogroup"] label, div[data-testid="stCheckbox"] label {
+        color: #FDFBD4 !important;
+        font-weight: 600 !important;
+    }
+    div[role="radiogroup"] label p, div[data-testid="stCheckbox"] label p {
+        color: #FDFBD4 !important;
+        font-weight: 600 !important;
+    }
+
     /* ---- Hero Banner ---- */
     .hero-banner {
-        background: linear-gradient(135deg, #38240D 0%, #713600 50%, #C05800 100%);
-        color: #FDFBD4;
+        background: linear-gradient(135deg, #38240D 0%, #713600 50%, #C05800 100%) !important;
+        color: #FDFBD4 !important;
         padding: 2.2rem 2rem;
         border-radius: 18px;
         box-shadow: 0 20px 30px -5px rgba(56, 36, 13, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
@@ -419,13 +618,13 @@ def get_theme_css(theme: str) -> str:
         font-size: 2.2rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
-        color: #FDFBD4;
+        color: #FDFBD4 !important;
         letter-spacing: -0.02em;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     }
     .hero-subtitle {
         font-size: 1.05rem;
-        color: #f7eed0;
+        color: #f7eed0 !important;
         max-width: 750px;
         line-height: 1.6;
         margin-bottom: 1.2rem;
@@ -433,8 +632,8 @@ def get_theme_css(theme: str) -> str:
 
     /* ---- Metric Cards ---- */
     .metric-card {
-        background: rgba(56, 36, 13, 0.75);
-        border: 1px solid rgba(192, 88, 0, 0.35);
+        background: rgba(56, 36, 13, 0.75) !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
         backdrop-filter: blur(10px);
         border-radius: 14px;
         padding: 1.2rem 1.5rem;
@@ -443,42 +642,45 @@ def get_theme_css(theme: str) -> str:
     }
     .metric-card:hover {
         transform: translateY(-3px);
-        border-color: #C05800;
+        border-color: #C05800 !important;
         box-shadow: 0 8px 20px rgba(113, 54, 0, 0.3);
     }
     .metric-val {
         font-size: 2rem;
         font-weight: 800;
-        color: #C05800;
+        color: #C05800 !important;
         text-shadow: 0 0 12px rgba(192, 88, 0, 0.3);
     }
     .metric-lbl {
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #e5d8b8;
+        color: #e5d8b8 !important;
         font-weight: 600;
     }
 
     /* ---- Custom Cards ---- */
     .custom-card {
-        background: #2b1b0d;
-        border: 1px solid rgba(192, 88, 0, 0.28);
+        background: #2b1b0d !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.28) !important;
         border-radius: 16px;
         padding: 1.4rem;
         margin-bottom: 1.2rem;
         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-        color: #FDFBD4;
+        color: #FDFBD4 !important;
         transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .custom-card:hover {
-        border-color: #C05800;
+        border-color: #C05800 !important;
         box-shadow: 0 8px 24px rgba(113, 54, 0, 0.25);
+    }
+    .custom-card * {
+        color: #FDFBD4 !important;
     }
     .card-title {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #FDFBD4;
+        color: #FDFBD4 !important;
         margin-bottom: 0.8rem;
         display: flex;
         align-items: center;
@@ -487,16 +689,16 @@ def get_theme_css(theme: str) -> str:
 
     /* ---- Chat Bubbles ---- */
     .chat-bubble-teacher {
-        background: #38240D;
-        border: 1px solid #713600;
+        background: #38240D !important;
+        border: 1px solid #713600 !important;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     .chat-bubble-parent {
-        background: #2b1709;
-        border: 1px solid #C05800;
+        background: #2b1709 !important;
+        border: 1px solid #C05800 !important;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
@@ -513,17 +715,17 @@ def get_theme_css(theme: str) -> str:
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-    .badge-underweight { background-color: rgba(253, 251, 212, 0.18); color: #FDFBD4; border: 1px solid rgba(253, 251, 212, 0.4); }
-    .badge-healthy { background-color: rgba(192, 88, 0, 0.3); color: #FDFBD4; border: 1px solid #C05800; }
-    .badge-overweight { background-color: rgba(224, 110, 20, 0.35); color: #FDFBD4; border: 1px solid #e06d06; }
-    .badge-obese { background-color: rgba(239, 68, 68, 0.25); color: #fecaca; border: 1px solid #ef4444; }
-    .badge-stunted { background-color: rgba(113, 54, 0, 0.5); color: #FDFBD4; border: 1px solid #713600; }
-    .badge-info { background-color: #FDFBD4; color: #38240D; font-weight: 800; }
+    .badge-underweight { background-color: rgba(253, 251, 212, 0.18) !important; color: #FDFBD4 !important; border: 1px solid rgba(253, 251, 212, 0.4) !important; }
+    .badge-healthy { background-color: rgba(192, 88, 0, 0.3) !important; color: #FDFBD4 !important; border: 1px solid #C05800 !important; }
+    .badge-overweight { background-color: rgba(224, 110, 20, 0.35) !important; color: #FDFBD4 !important; border: 1px solid #e06d06 !important; }
+    .badge-obese { background-color: rgba(239, 68, 68, 0.25) !important; color: #fecaca !important; border: 1px solid #ef4444 !important; }
+    .badge-stunted { background-color: rgba(113, 54, 0, 0.5) !important; color: #FDFBD4 !important; border: 1px solid #713600 !important; }
+    .badge-info { background-color: #FDFBD4 !important; color: #38240D !important; font-weight: 800 !important; }
 
     .section-header {
         font-size: 1.5rem;
         font-weight: 800;
-        color: #FDFBD4;
+        color: #FDFBD4 !important;
         margin-top: 1rem;
         margin-bottom: 1.2rem;
         border-left: 5px solid #C05800;
@@ -535,6 +737,34 @@ def get_theme_css(theme: str) -> str:
         border-radius: 12px;
         overflow: hidden;
         border: 1px solid rgba(192, 88, 0, 0.25);
+    }
+
+    /* ---- Buttons (Dark) ---- */
+    button[kind="secondary"] {
+        background-color: rgba(56, 36, 13, 0.6) !important;
+        color: #FDFBD4 !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        font-weight: 600 !important;
+    }
+    button[kind="secondary"] p, button[kind="secondary"] div {
+        color: #FDFBD4 !important;
+        font-weight: 600 !important;
+    }
+    button[kind="secondary"]:hover {
+        background-color: rgba(192, 88, 0, 0.25) !important;
+        border-color: #C05800 !important;
+        color: #ffffff !important;
+    }
+    button[kind="primary"], button[kind="primaryFormSubmit"] {
+        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
+        border: 1px solid #FDFBD4 !important;
+        color: #FDFBD4 !important;
+        box-shadow: 0 4px 18px rgba(192, 88, 0, 0.5) !important;
+        font-weight: 700 !important;
+    }
+    button[kind="primary"] p, button[kind="primaryFormSubmit"] p {
+        color: #FDFBD4 !important;
+        font-weight: 700 !important;
     }
 
     /* ---- Sidebar Navigation Alignment (Dark) ---- */
@@ -597,7 +827,7 @@ def get_theme_css(theme: str) -> str:
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.12em;
-        color: #bfa882;
+        color: #bfa882 !important;
         padding: 0.6rem 0.4rem 0.35rem;
     }
 
@@ -1855,10 +2085,10 @@ if user_role == "Teacher":
                 st.markdown(f"""
                 <div class="custom-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 1.1rem; font-weight: 700; color: #f8fafc;">{row['Child Name']}</span>
+                        <span class="card-heading" style="font-size: 1.1rem; font-weight: 700;">{row['Child Name']}</span>
                         <span class="badge badge-info">{row['Child ID']}</span>
                     </div>
-                    <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 0.5rem;">
+                    <div class="card-subtext" style="font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.6;">
                         👨‍👩‍👧 Parent: <b>{row['Parent Name']}</b><br>
                         📍 Location: <b>{row['Place']}</b><br>
                         📞 Phone: <b>{row['Phone Number']}</b>
@@ -2080,10 +2310,10 @@ if user_role == "Teacher":
                         st.markdown(f"""
                         <div class="custom-card" style="padding: 0.85rem 1rem; margin-bottom: 0.6rem; border-left: 4px solid {bar_color};">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-weight: 700; font-size: 1rem; color: #f8fafc;">{cname} <span style="font-size: 0.8rem; color: #94a3b8;">({cid})</span></span>
+                                <span class="card-heading" style="font-weight: 700; font-size: 1rem;">{cname} <span class="card-subtext" style="font-size: 0.8rem;">({cid})</span></span>
                                 <span class="badge {child_stats['badge_cls']}">{child_stats['badge_text']}</span>
                             </div>
-                            <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.3rem;">
+                            <div class="card-subtext" style="font-size: 0.82rem; margin-top: 0.3rem;">
                                 Logged: <b>{child_stats['present_days']}/{child_stats['total_days']} Days</b> | 📞 {row.get('Phone Number', 'N/A')}
                             </div>
                             <div class="att-progress-bg">
@@ -2250,15 +2480,15 @@ if user_role == "Teacher":
             st.markdown(f"""
             <div class="custom-card">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 1.2rem; font-weight: 700; color: #f8fafc;">📄 {rep['title']}</span>
+                    <span class="card-heading" style="font-size: 1.2rem; font-weight: 700;">📄 {rep['title']}</span>
                     <span class="badge {b_cls}">{rep.get('aiStatus', 'Healthy')}</span>
                 </div>
-                <div style="font-size: 0.9rem; color: #cbd5e1; margin-top: 0.6rem; display: flex; gap: 1.5rem;">
+                <div class="card-meta" style="font-size: 0.9rem; margin-top: 0.6rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
                     <span>🆔 Roll No: <b>{rep['childId']}</b></span>
                     <span>🧒 Child Name: <b>{rep['childName']}</b></span>
                     <span>🕒 Generated: <b>{rep['timestamp']}</b></span>
                 </div>
-                <div style="margin-top: 0.6rem; font-size: 0.85rem; color: #94a3b8;">
+                <div class="card-subtext" style="margin-top: 0.6rem; font-size: 0.85rem;">
                     Height Pctl: <b>P{rep.get('hfa_p', 50):.1f}</b> | Weight/Height Pctl: <b>P{rep.get('wfh_p', 50):.1f}</b> | BMI: <b>{rep.get('bmi', 15.0):.1f}</b>
                 </div>
             </div>
@@ -2335,15 +2565,15 @@ if user_role == "Teacher":
         for m_type, m_val in meal_plan_res["meals"].items():
             icon = meal_icons.get(m_type, "🍽️")
             st.markdown(f"""
-            <div class="custom-card" style="margin-bottom: 0.9rem; border-left: 4px solid #0284c7;">
+            <div class="custom-card" style="margin-bottom: 0.9rem; border-left: 4px solid #C05800;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 1.15rem; font-weight: 700; color: #f8fafc;">{icon} {m_type}: {m_val['name']}</span>
+                    <span class="card-heading" style="font-size: 1.15rem; font-weight: 700;">{icon} {m_type}: {m_val['name']}</span>
                     <span class="badge badge-info">~{m_val['cal']} kcal</span>
                 </div>
-                <div style="color: #94a3b8; font-size: 0.92rem; margin-top: 0.4rem;">
+                <div class="card-subtext" style="font-size: 0.92rem; margin-top: 0.4rem;">
                     {m_val['desc']}
                 </div>
-                <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; font-size: 0.85rem; color: #cbd5e1;">
+                <div class="card-meta" style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; font-size: 0.85rem;">
                     <span>✋ <b>Portion:</b> {m_val['hand_portion']}</span>
                     <span>✨ <b>Key Nutrients:</b> {m_val['nutrients']}</span>
                     <span>🥩 <b>Protein:</b> {m_val['p']}g | <b>Carbs:</b> {m_val['c']}g | <b>Fats:</b> {m_val['f']}g</span>
@@ -2367,9 +2597,9 @@ if user_role == "Teacher":
                 st.markdown(f"""
                 <div class="custom-card" style="text-align: center; padding: 1rem 0.8rem;">
                     <div style="font-size: 2rem;">{hicon}</div>
-                    <div style="font-weight: 700; color: #f8fafc; margin-top: 0.3rem;">{hname} = {hnut}</div>
-                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem;">{hexamples}</div>
-                    <div style="font-size: 0.82rem; color: #38bdf8; font-weight: 600; margin-top: 0.5rem; background: rgba(56, 189, 248, 0.1); padding: 4px; border-radius: 6px;">{hserv}</div>
+                    <div class="card-heading" style="font-weight: 700; margin-top: 0.3rem;">{hname} = {hnut}</div>
+                    <div class="card-subtext" style="font-size: 0.8rem; margin-top: 0.2rem;">{hexamples}</div>
+                    <div style="font-size: 0.82rem; color: #C05800; font-weight: 700; margin-top: 0.5rem; background: rgba(192, 88, 0, 0.12); padding: 4px; border-radius: 6px;">{hserv}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -2662,7 +2892,7 @@ else:
             st.markdown(f"""
             <div class="custom-card">
                 <div class="card-title">📇 Registered Student Details</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #e2e8f0; font-size: 1rem;">
+                <div class="card-meta" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 1rem;">
                     <div>🆔 <b>Roll No / Child ID:</b> {child_info['Child ID']}</div>
                     <div>🧒 <b>Child Full Name:</b> {child_info['Child Name']}</div>
                     <div>👨‍👩‍👧 <b>Parent / Guardian:</b> {child_info['Parent Name']}</div>
@@ -3055,10 +3285,10 @@ if nav_selection == "🥗 Food Recommendations":
             st.markdown(f"""
             <div class="custom-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <span style="font-size: 1.4rem; font-weight: 800; color: #f8fafc;">{status_name}</span>
+                    <span class="card-heading" style="font-size: 1.4rem; font-weight: 800;">{status_name}</span>
                     <span class="badge {badge_cls}">{row['Category']}</span>
                 </div>
-                <div style="background: rgba(255, 255, 255, 0.03); padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div class="card-subtext" style="background: rgba(192, 88, 0, 0.08); padding: 0.8rem 1rem; border-radius: 8px; margin-bottom: 1rem;">
                     🎯 <b>Nutritional Goal:</b> {row.get('Goal', 'N/A')}
                 </div>
             </div>
@@ -3085,8 +3315,8 @@ elif nav_selection == "📅 Weekly Meal Schedule":
         for _, row in meal_df.iterrows():
             st.markdown(f"""
             <div class="custom-card">
-                <div style="font-size: 1.2rem; font-weight: 700; color: #38bdf8;">📅 {row['Day']}</div>
-                <div style="font-size: 1.1rem; font-weight: 600; color: #f8fafc; margin-top: 0.3rem;">{row['Meal']}</div>
+                <div class="card-heading" style="font-size: 1.2rem; font-weight: 700; color: #C05800 !important;">📅 {row['Day']}</div>
+                <div class="card-heading" style="font-size: 1.1rem; font-weight: 600; margin-top: 0.3rem;">{row['Meal']}</div>
                 <div style="margin-top: 0.8rem; display: flex; gap: 1rem; flex-wrap: wrap;">
                     <span class="badge badge-info">🔥 Calories: {row.get('Calories (kcal)', 'N/A')}</span>
                     <span class="badge badge-healthy">🥩 Protein: {row.get('Protein (g)', 'N/A')}</span>
