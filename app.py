@@ -117,7 +117,7 @@ except Exception:
 if not os.path.exists(TEMP_REPORTS_DIR):
     os.makedirs(TEMP_REPORTS_DIR, exist_ok=True)
 
-# ------------------- CUSTOM CSS STYLING -------------------
+# ------------------- CUSTOM CSS STYLING (CHOCOLATE TRUFFLE THEME) -------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -126,21 +126,28 @@ st.markdown("""
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+    .stApp {
+        background: radial-gradient(circle at 50% 0%, #2b1a0d 0%, #170e06 100%);
+        color: #FDFBD4;
+    }
+
     .main .block-container {
         padding-top: 1.8rem;
         padding-bottom: 3rem;
         max-width: 1200px;
     }
 
+    /* ---- Hero Banner ---- */
     .hero-banner {
-        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
-        color: white;
+        background: linear-gradient(135deg, #38240D 0%, #713600 50%, #C05800 100%);
+        color: #FDFBD4;
         padding: 2.2rem 2rem;
         border-radius: 18px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 30px -5px rgba(56, 36, 13, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
         margin-bottom: 1.8rem;
         position: relative;
         overflow: hidden;
+        border: 1px solid rgba(253, 251, 212, 0.25);
     }
     .hero-banner::after {
         content: '';
@@ -149,7 +156,7 @@ st.markdown("""
         right: -10%;
         width: 300px;
         height: 300px;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(253, 251, 212, 0.08);
         border-radius: 50%;
         pointer-events: none;
     }
@@ -157,75 +164,91 @@ st.markdown("""
         font-size: 2.2rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
-        color: #ffffff;
+        color: #FDFBD4;
         letter-spacing: -0.02em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     }
     .hero-subtitle {
         font-size: 1.05rem;
-        color: #e0e7ff;
+        color: #f7eed0;
         max-width: 750px;
         line-height: 1.6;
         margin-bottom: 1.2rem;
     }
 
+    /* ---- Metric Cards ---- */
     .metric-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(56, 36, 13, 0.75);
+        border: 1px solid rgba(192, 88, 0, 0.35);
         backdrop-filter: blur(10px);
         border-radius: 14px;
         padding: 1.2rem 1.5rem;
         text-align: center;
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease, border-color 0.2s ease;
     }
     .metric-card:hover {
         transform: translateY(-3px);
+        border-color: #C05800;
+        box-shadow: 0 8px 20px rgba(113, 54, 0, 0.3);
     }
     .metric-val {
         font-size: 2rem;
         font-weight: 800;
-        color: #38bdf8;
+        color: #C05800;
+        text-shadow: 0 0 12px rgba(192, 88, 0, 0.3);
     }
     .metric-lbl {
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #94a3b8;
+        color: #e5d8b8;
         font-weight: 600;
     }
 
+    /* ---- Custom Cards ---- */
     .custom-card {
-        background: #1e293b;
-        border: 1px solid #334155;
+        background: #2b1b0d;
+        border: 1px solid rgba(192, 88, 0, 0.28);
         border-radius: 16px;
         padding: 1.4rem;
         margin-bottom: 1.2rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        color: #FDFBD4;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .custom-card:hover {
+        border-color: #C05800;
+        box-shadow: 0 8px 24px rgba(113, 54, 0, 0.25);
     }
     .card-title {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #f8fafc;
+        color: #FDFBD4;
         margin-bottom: 0.8rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
 
+    /* ---- Chat Bubbles ---- */
     .chat-bubble-teacher {
-        background: #1e1b4b;
-        border: 1px solid #4338ca;
+        background: #38240D;
+        border: 1px solid #713600;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
     .chat-bubble-parent {
-        background: #022c22;
-        border: 1px solid #059669;
+        background: #2b1709;
+        border: 1px solid #C05800;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
+    /* ---- Badges (Chocolate Truffle Palette) ---- */
     .badge {
         display: inline-block;
         padding: 0.35rem 0.75rem;
@@ -235,31 +258,34 @@ st.markdown("""
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-    .badge-underweight { background-color: #fef3c7; color: #92400e; }
-    .badge-healthy { background-color: #d1fae5; color: #065f46; }
-    .badge-overweight { background-color: #ffedd5; color: #9a3412; }
-    .badge-obese { background-color: #fee2e2; color: #991b1b; }
-    .badge-stunted { background-color: #f3e8ff; color: #6b21a8; }
-    .badge-info { background-color: #e0f2fe; color: #075985; }
+    .badge-underweight { background-color: rgba(253, 251, 212, 0.18); color: #FDFBD4; border: 1px solid rgba(253, 251, 212, 0.4); }
+    .badge-healthy { background-color: rgba(192, 88, 0, 0.3); color: #FDFBD4; border: 1px solid #C05800; }
+    .badge-overweight { background-color: rgba(224, 110, 20, 0.35); color: #FDFBD4; border: 1px solid #e06d06; }
+    .badge-obese { background-color: rgba(239, 68, 68, 0.25); color: #fecaca; border: 1px solid #ef4444; }
+    .badge-stunted { background-color: rgba(113, 54, 0, 0.5); color: #FDFBD4; border: 1px solid #713600; }
+    .badge-info { background-color: #FDFBD4; color: #38240D; font-weight: 800; }
 
     .section-header {
         font-size: 1.5rem;
         font-weight: 800;
-        color: #f8fafc;
+        color: #FDFBD4;
         margin-top: 1rem;
         margin-bottom: 1.2rem;
-        border-left: 4px solid #6366f1;
-        padding-left: 0.8rem;
+        border-left: 5px solid #C05800;
+        padding-left: 0.85rem;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 
     .stDataFrame {
         border-radius: 12px;
         overflow: hidden;
+        border: 1px solid rgba(192, 88, 0, 0.25);
     }
 
-    /* ---- Sidebar Navigation Styling ---- */
+    /* ---- Sidebar Navigation Styling (Espresso Truffle) ---- */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        background: linear-gradient(180deg, #180e05 0%, #261509 50%, #38240D 100%);
+        border-right: 1px solid rgba(192, 88, 0, 0.25);
     }
     section[data-testid="stSidebar"] .stButton > button {
         width: 100%;
@@ -268,7 +294,7 @@ st.markdown("""
         border-radius: 12px;
         border: 1px solid transparent;
         background: transparent;
-        color: #cbd5e1;
+        color: #f7eed0;
         font-size: 0.92rem;
         font-weight: 600;
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -278,9 +304,9 @@ st.markdown("""
         letter-spacing: 0.01em;
     }
     section[data-testid="stSidebar"] .stButton > button:hover {
-        background: rgba(99, 102, 241, 0.15);
-        border-color: rgba(99, 102, 241, 0.3);
-        color: #e0e7ff;
+        background: rgba(192, 88, 0, 0.2);
+        border-color: rgba(192, 88, 0, 0.45);
+        color: #FDFBD4;
         transform: translateX(4px);
     }
     section[data-testid="stSidebar"] .stButton > button:active {
@@ -289,12 +315,12 @@ st.markdown("""
     section[data-testid="stSidebar"] .stButton > button:focus:not(:focus-visible) {
         box-shadow: none;
     }
-    /* Active nav item styling — applied via key matching */
+    /* Active nav item styling — Chocolate Truffle Gold Gradient */
     .nav-active > button {
-        background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%) !important;
-        border-color: #818cf8 !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
+        border-color: #FDFBD4 !important;
+        color: #FDFBD4 !important;
+        box-shadow: 0 4px 18px rgba(192, 88, 0, 0.5) !important;
         font-weight: 700 !important;
     }
     .nav-active > button:hover {
@@ -306,21 +332,37 @@ st.markdown("""
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.12em;
-        color: #475569;
+        color: #bfa882;
         padding: 0.6rem 0.4rem 0.35rem;
         margin-top: 0.2rem;
     }
     /* Logout button override */
     .logout-btn > button {
-        background: rgba(239, 68, 68, 0.1) !important;
-        border: 1px solid rgba(239, 68, 68, 0.3) !important;
-        color: #f87171 !important;
+        background: rgba(239, 68, 68, 0.12) !important;
+        border: 1px solid rgba(239, 68, 68, 0.35) !important;
+        color: #fca5a5 !important;
     }
     .logout-btn > button:hover {
-        background: rgba(239, 68, 68, 0.25) !important;
+        background: rgba(239, 68, 68, 0.3) !important;
         border-color: #ef4444 !important;
-        color: #fecaca !important;
+        color: #ffffff !important;
         transform: translateX(0) !important;
+    }
+
+    /* ---- Attendance Progress Bars ---- */
+    .att-progress-bg {
+        background: #1a0f06;
+        border: 1px solid rgba(192, 88, 0, 0.2);
+        border-radius: 9999px;
+        height: 8px;
+        width: 100%;
+        overflow: hidden;
+        margin-top: 6px;
+    }
+    .att-progress-bar {
+        height: 100%;
+        border-radius: 9999px;
+        transition: width 0.4s ease;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -1359,21 +1401,21 @@ user_role = current_user.get("role", "")
 
 st.sidebar.markdown(f"""
 <div style="display: flex; align-items: center; gap: 0.85rem; padding: 0.6rem 0 0.4rem;">
-    <div style="background: #ffffff; padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.3);">
+    <div style="background: #FDFBD4; padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border: 1px solid #C05800;">
         <img src="data:image/png;base64,{LOGO_B64}" width="38" height="38" style="border-radius: 8px; object-fit: contain;" alt="Growth Advisor Logo">
     </div>
     <div>
-        <div style="font-size: 1.32rem; font-weight: 800; color: #f8fafc; letter-spacing: -0.02em; line-height: 1.15;">Growth Advisor</div>
-        <div style="font-size: 0.72rem; color: #818cf8; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
+        <div style="font-size: 1.32rem; font-weight: 800; color: #FDFBD4; letter-spacing: -0.02em; line-height: 1.15;">Growth Advisor</div>
+        <div style="font-size: 0.72rem; color: #C05800; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 st.sidebar.markdown(f"""
-<div style="background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(56,189,248,0.1)); border: 1px solid rgba(99,102,241,0.25); padding: 0.75rem 0.9rem; border-radius: 12px; margin: 0.8rem 0;">
-    <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem;">👤 {current_user['fullName']}</div>
-    <div style="font-size: 0.8rem; color: #818cf8; margin-top: 0.15rem;">Role: <b>{user_role}</b></div>
-    {f'<div style="font-size: 0.8rem; color: #34d399; margin-top: 0.1rem;">Roll No: <b>{current_user["childId"]}</b></div>' if user_role == 'Parent' else ''}
+<div style="background: linear-gradient(135deg, rgba(113,54,0,0.45), rgba(192,88,0,0.2)); border: 1px solid rgba(192,88,0,0.35); padding: 0.75rem 0.9rem; border-radius: 12px; margin: 0.8rem 0;">
+    <div style="font-weight: 700; color: #FDFBD4; font-size: 0.95rem;">👤 {current_user['fullName']}</div>
+    <div style="font-size: 0.8rem; color: #C05800; margin-top: 0.15rem; font-weight: 600;">Role: <b style="color:#FDFBD4;">{user_role}</b></div>
+    {f'<div style="font-size: 0.8rem; color: #FDFBD4; margin-top: 0.1rem;">Roll No: <b style="color:#C05800;">{current_user["childId"]}</b></div>' if user_role == 'Parent' else ''}
 </div>
 """, unsafe_allow_html=True)
 
