@@ -238,47 +238,55 @@ def get_theme_css(theme: str) -> str:
         font-weight: 600 !important;
     }
 
-    /* ---- Datepicker & Calendar (Light) ---- */
+    /* ---- Datepicker & Calendar (Light Mode: High Contrast) ---- */
+    div[data-testid="stDateInput"] input,
     div[data-testid="stDateInput"] div[data-baseweb="input"],
-    div[data-testid="stDateInput"] input {
+    div[data-testid="stDateInput"] div[data-baseweb="base-input"] {
         background-color: #ffffff !important;
         color: #38240D !important;
-        border-color: rgba(192, 88, 0, 0.35) !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
     }
     div[data-baseweb="popover"],
     div[data-baseweb="popover"] > div,
     div[data-baseweb="calendar"],
+    div[data-baseweb="calendar"] > div,
+    div[role="dialog"][data-baseweb="calendar"],
     div[role="dialog"] {
         background-color: #ffffff !important;
         background: #ffffff !important;
         color: #38240D !important;
         border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
         border-radius: 12px !important;
-        box-shadow: 0 10px 30px rgba(113, 54, 0, 0.15) !important;
-    }
-    div[data-baseweb="calendar"] * {
-        color: #38240D !important;
+        box-shadow: 0 12px 32px rgba(113, 54, 0, 0.18) !important;
     }
     div[data-baseweb="calendar"] header,
-    div[data-baseweb="calendar"] header button {
-        color: #38240D !important;
+    div[data-baseweb="calendar"] header *,
+    div[data-baseweb="calendar"] header button,
+    div[data-baseweb="calendar"] header select,
+    div[data-baseweb="calendar"] select {
+        background-color: transparent !important;
         background: transparent !important;
+        color: #38240D !important;
+        fill: #38240D !important;
     }
-    div[data-baseweb="calendar"] [role="columnheader"] {
+    div[data-baseweb="calendar"] [role="columnheader"],
+    div[data-baseweb="calendar"] [role="columnheader"] * {
         color: #C05800 !important;
         font-weight: 800 !important;
     }
-    div[data-baseweb="calendar"] [role="gridcell"] {
+    div[data-baseweb="calendar"] [role="gridcell"],
+    div[data-baseweb="calendar"] [role="gridcell"] *,
+    div[data-baseweb="calendar"] [aria-roledescription="button"],
+    div[data-baseweb="calendar"] [aria-roledescription="button"] * {
         color: #38240D !important;
-        background: transparent !important;
-    }
-    div[data-baseweb="calendar"] [role="gridcell"] > div {
-        color: #38240D !important;
+        background-color: transparent !important;
         font-weight: 600 !important;
     }
     div[data-baseweb="calendar"] [aria-disabled="true"],
     div[data-baseweb="calendar"] [aria-disabled="true"] * {
-        color: rgba(56, 36, 13, 0.35) !important;
+        color: rgba(56, 36, 13, 0.3) !important;
     }
     div[data-baseweb="calendar"] [aria-selected="true"],
     div[data-baseweb="calendar"] [aria-selected="true"] * {
@@ -288,7 +296,8 @@ def get_theme_css(theme: str) -> str:
         border-radius: 50% !important;
         font-weight: 800 !important;
     }
-    div[data-baseweb="calendar"] [role="gridcell"]:hover > div {
+    div[data-baseweb="calendar"] [role="gridcell"]:hover > div,
+    div[data-baseweb="calendar"] [aria-roledescription="button"]:hover {
         background-color: rgba(192, 88, 0, 0.15) !important;
         color: #C05800 !important;
         border-radius: 50% !important;
@@ -773,42 +782,62 @@ def get_theme_css(theme: str) -> str:
         font-weight: 600 !important;
     }
 
-    /* ---- Datepicker & Calendar (Dark Mode: High Contrast) ---- */
+    /* ---- Datepicker & Calendar (Dark Mode: Comprehensive BaseWeb Override) ---- */
+    div[data-testid="stDateInput"] input,
     div[data-testid="stDateInput"] div[data-baseweb="input"],
-    div[data-testid="stDateInput"] input {
+    div[data-testid="stDateInput"] div[data-baseweb="base-input"] {
         background-color: #2b1b0d !important;
+        background: #2b1b0d !important;
         color: #FDFBD4 !important;
-        border-color: rgba(192, 88, 0, 0.35) !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.4) !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
     }
     div[data-baseweb="popover"],
     div[data-baseweb="popover"] > div,
     div[data-baseweb="calendar"],
+    div[data-baseweb="calendar"] > div,
+    div[data-baseweb="calendar"] div,
+    div[data-baseweb="calendar"] [role="grid"],
+    div[data-baseweb="calendar"] [role="row"],
+    div[role="dialog"][data-baseweb="calendar"],
     div[role="dialog"] {
         background-color: #2b1b0d !important;
         background: #2b1b0d !important;
         color: #FDFBD4 !important;
+        border-color: #C05800 !important;
+    }
+    div[data-baseweb="popover"] > div,
+    div[data-baseweb="calendar"],
+    div[role="dialog"] {
         border: 1.5px solid #C05800 !important;
         border-radius: 12px !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8) !important;
     }
     div[data-baseweb="calendar"] * {
         color: #FDFBD4 !important;
     }
     div[data-baseweb="calendar"] header,
-    div[data-baseweb="calendar"] header button {
-        color: #FDFBD4 !important;
+    div[data-baseweb="calendar"] header *,
+    div[data-baseweb="calendar"] header button,
+    div[data-baseweb="calendar"] header select,
+    div[data-baseweb="calendar"] select {
+        background-color: transparent !important;
         background: transparent !important;
+        color: #FDFBD4 !important;
+        fill: #FDFBD4 !important;
     }
-    div[data-baseweb="calendar"] [role="columnheader"] {
+    div[data-baseweb="calendar"] [role="columnheader"],
+    div[data-baseweb="calendar"] [role="columnheader"] * {
         color: #C05800 !important;
         font-weight: 800 !important;
     }
-    div[data-baseweb="calendar"] [role="gridcell"] {
+    div[data-baseweb="calendar"] [role="gridcell"],
+    div[data-baseweb="calendar"] [role="gridcell"] *,
+    div[data-baseweb="calendar"] [aria-roledescription="button"],
+    div[data-baseweb="calendar"] [aria-roledescription="button"] * {
         color: #FDFBD4 !important;
-        background: transparent !important;
-    }
-    div[data-baseweb="calendar"] [role="gridcell"] > div {
-        color: #FDFBD4 !important;
+        background-color: transparent !important;
         font-weight: 600 !important;
     }
     div[data-baseweb="calendar"] [aria-disabled="true"],
@@ -823,8 +852,9 @@ def get_theme_css(theme: str) -> str:
         border-radius: 50% !important;
         font-weight: 800 !important;
     }
-    div[data-baseweb="calendar"] [role="gridcell"]:hover > div {
-        background-color: rgba(192, 88, 0, 0.35) !important;
+    div[data-baseweb="calendar"] [role="gridcell"]:hover > div,
+    div[data-baseweb="calendar"] [aria-roledescription="button"]:hover {
+        background-color: rgba(192, 88, 0, 0.4) !important;
         color: #ffffff !important;
         border-radius: 50% !important;
     }
