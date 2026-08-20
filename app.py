@@ -434,30 +434,81 @@ def get_theme_css(theme: str) -> str:
     }
 
     /* ---- Buttons (Light) ---- */
-    button[kind="secondary"] {
+    button,
+    [data-testid*="stBaseButton"],
+    div.stButton > button,
+    div[data-testid="stFormSubmitButton"] > button,
+    [data-testid="stDownloadButton"] > button {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        transition: all 0.2s cubic-bezier(.4,0,.2,1) !important;
+    }
+
+    /* Secondary Buttons (Light) */
+    button[kind="secondary"],
+    button[kind="secondaryFormSubmit"],
+    [data-testid="stBaseButton-secondary"],
+    [data-testid="stBaseButton-secondaryFormSubmit"],
+    div.stButton > button:not([kind="primary"]) {
         background-color: #ffffff !important;
+        background: #ffffff !important;
         color: #38240D !important;
         border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        font-weight: 600 !important;
+        box-shadow: 0 2px 6px rgba(113, 54, 0, 0.06) !important;
     }
-    button[kind="secondary"] p, button[kind="secondary"] div {
+    button[kind="secondary"] *,
+    button[kind="secondaryFormSubmit"] *,
+    [data-testid="stBaseButton-secondary"] *,
+    [data-testid="stBaseButton-secondaryFormSubmit"] *,
+    div.stButton > button:not([kind="primary"]) * {
         color: #38240D !important;
-        font-weight: 600 !important;
     }
-    button[kind="secondary"]:hover {
+    button[kind="secondary"]:hover,
+    button[kind="secondaryFormSubmit"]:hover,
+    [data-testid="stBaseButton-secondary"]:hover,
+    [data-testid="stBaseButton-secondaryFormSubmit"]:hover {
         background-color: rgba(192, 88, 0, 0.1) !important;
         border-color: #C05800 !important;
         color: #C05800 !important;
     }
-    button[kind="primary"], button[kind="primaryFormSubmit"] {
+    button[kind="secondary"]:hover *,
+    button[kind="secondaryFormSubmit"]:hover * {
+        color: #C05800 !important;
+    }
+
+    /* Primary & Form Submit & Download Buttons (Light) */
+    button[kind="primary"],
+    button[kind="primaryFormSubmit"],
+    [data-testid="stBaseButton-primary"],
+    [data-testid="stBaseButton-primaryFormSubmit"],
+    div[data-testid="stFormSubmitButton"] > button,
+    [data-testid="stDownloadButton"] > button {
         background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
+        background-color: #C05800 !important;
         color: #FDFBD4 !important;
         border: 1px solid #713600 !important;
+        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.25) !important;
         font-weight: 700 !important;
     }
-    button[kind="primary"] p, button[kind="primaryFormSubmit"] p {
+    button[kind="primary"] *,
+    button[kind="primaryFormSubmit"] *,
+    [data-testid="stBaseButton-primary"] *,
+    [data-testid="stBaseButton-primaryFormSubmit"] *,
+    div[data-testid="stFormSubmitButton"] > button *,
+    [data-testid="stDownloadButton"] > button * {
         color: #FDFBD4 !important;
         font-weight: 700 !important;
+    }
+    button[kind="primary"]:hover,
+    button[kind="primaryFormSubmit"]:hover,
+    [data-testid="stBaseButton-primary"]:hover,
+    [data-testid="stBaseButton-primaryFormSubmit"]:hover,
+    div[data-testid="stFormSubmitButton"] > button:hover,
+    [data-testid="stDownloadButton"] > button:hover {
+        background: linear-gradient(135deg, #8a4200 0%, #d96502 100%) !important;
+        box-shadow: 0 6px 20px rgba(113, 54, 0, 0.35) !important;
+        transform: translateY(-1px);
     }
 
     /* ---- Sidebar Navigation Alignment (Light) ---- */
@@ -865,32 +916,84 @@ def get_theme_css(theme: str) -> str:
         border: 1px solid rgba(192, 88, 0, 0.25);
     }
 
-    /* ---- Buttons (Dark) ---- */
-    button[kind="secondary"] {
-        background-color: rgba(56, 36, 13, 0.6) !important;
-        color: #FDFBD4 !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        font-weight: 600 !important;
+    /* ---- Buttons (Dark Mode: High Contrast) ---- */
+    button,
+    [data-testid*="stBaseButton"],
+    div.stButton > button,
+    div[data-testid="stFormSubmitButton"] > button,
+    [data-testid="stDownloadButton"] > button {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        transition: all 0.2s cubic-bezier(.4,0,.2,1) !important;
     }
-    button[kind="secondary"] p, button[kind="secondary"] div {
+
+    /* Secondary Buttons (Dark) */
+    button[kind="secondary"],
+    button[kind="secondaryFormSubmit"],
+    [data-testid="stBaseButton-secondary"],
+    [data-testid="stBaseButton-secondaryFormSubmit"],
+    div.stButton > button:not([kind="primary"]) {
+        background-color: #2b1b0d !important;
+        background: #2b1b0d !important;
         color: #FDFBD4 !important;
-        font-weight: 600 !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.45) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
     }
-    button[kind="secondary"]:hover {
-        background-color: rgba(192, 88, 0, 0.25) !important;
+    button[kind="secondary"] *,
+    button[kind="secondaryFormSubmit"] *,
+    [data-testid="stBaseButton-secondary"] *,
+    [data-testid="stBaseButton-secondaryFormSubmit"] *,
+    div.stButton > button:not([kind="primary"]) * {
+        color: #FDFBD4 !important;
+    }
+    button[kind="secondary"]:hover,
+    button[kind="secondaryFormSubmit"]:hover,
+    [data-testid="stBaseButton-secondary"]:hover,
+    [data-testid="stBaseButton-secondaryFormSubmit"]:hover {
+        background-color: rgba(192, 88, 0, 0.3) !important;
+        background: rgba(192, 88, 0, 0.3) !important;
         border-color: #C05800 !important;
         color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(192, 88, 0, 0.35) !important;
     }
-    button[kind="primary"], button[kind="primaryFormSubmit"] {
+    button[kind="secondary"]:hover *,
+    button[kind="secondaryFormSubmit"]:hover * {
+        color: #ffffff !important;
+    }
+
+    /* Primary & Form Submit & Download Buttons (Dark) */
+    button[kind="primary"],
+    button[kind="primaryFormSubmit"],
+    [data-testid="stBaseButton-primary"],
+    [data-testid="stBaseButton-primaryFormSubmit"],
+    div[data-testid="stFormSubmitButton"] > button,
+    [data-testid="stDownloadButton"] > button {
         background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
-        border: 1px solid #FDFBD4 !important;
+        background-color: #C05800 !important;
+        border: 1px solid rgba(253, 251, 212, 0.5) !important;
         color: #FDFBD4 !important;
         box-shadow: 0 4px 18px rgba(192, 88, 0, 0.5) !important;
         font-weight: 700 !important;
     }
-    button[kind="primary"] p, button[kind="primaryFormSubmit"] p {
+    button[kind="primary"] *,
+    button[kind="primaryFormSubmit"] *,
+    [data-testid="stBaseButton-primary"] *,
+    [data-testid="stBaseButton-primaryFormSubmit"] *,
+    div[data-testid="stFormSubmitButton"] > button *,
+    [data-testid="stDownloadButton"] > button * {
         color: #FDFBD4 !important;
         font-weight: 700 !important;
+    }
+    button[kind="primary"]:hover,
+    button[kind="primaryFormSubmit"]:hover,
+    [data-testid="stBaseButton-primary"]:hover,
+    [data-testid="stBaseButton-primaryFormSubmit"]:hover,
+    div[data-testid="stFormSubmitButton"] > button:hover,
+    [data-testid="stDownloadButton"] > button:hover {
+        background: linear-gradient(135deg, #8a4200 0%, #d96502 100%) !important;
+        box-shadow: 0 6px 24px rgba(192, 88, 0, 0.7) !important;
+        transform: translateY(-1px);
     }
 
     /* ---- Sidebar Navigation Alignment (Dark) ---- */
@@ -1665,7 +1768,7 @@ if st.session_state.current_user is None:
             with st.form("login_form"):
                 login_user = st.text_input("Username", value="", key="login_user")
                 login_pass = st.text_input("Password", type="password", value="", key="login_pass")
-                submit_login = st.form_submit_button("🚀 Log In", use_container_width=True)
+                submit_login = st.form_submit_button("🚀 Log In", use_container_width=True, type="primary")
 
             if submit_login:
                 if st.session_state.failed_login_attempts >= 5:
@@ -1704,7 +1807,7 @@ if st.session_state.current_user is None:
                 student_options = {f"{r['Child Name']} ({r['Child ID']})": r['Child ID'] for _, r in students_df.iterrows()}
                 selected_student_str = st.selectbox("Select Your Child (Roll No / ID)", options=list(student_options.keys()))
                 reg_child_id = student_options[selected_student_str]
-                submit_reg = st.form_submit_button("📝 Register Parent Account", use_container_width=True)
+                submit_reg = st.form_submit_button("📝 Register Parent Account", use_container_width=True, type="primary")
 
             if submit_reg:
                 u_key = reg_username.strip().lower()
@@ -1742,7 +1845,7 @@ if st.session_state.current_user is None:
             with st.form("teacher_request_form"):
                 tr_fullname = st.text_input("Your Full Name", value="", key="tr_name")
                 tr_email = st.text_input("Your Email Address", value="", key="tr_email")
-                tr_submit = st.form_submit_button("📧 Request Teacher Invite Code", use_container_width=True)
+                tr_submit = st.form_submit_button("📧 Request Teacher Invite Code", use_container_width=True, type="primary")
 
             if tr_submit:
                 if not tr_email.strip() or not tr_fullname.strip():
@@ -1770,7 +1873,7 @@ if st.session_state.current_user is None:
                 tc_code = st.text_input("Enter 6-Digit Invite Code", value="", key="tc_code")
                 tc_username = st.text_input("Choose Username", value="", key="tc_user")
                 tc_password = st.text_input("Choose Password (Min 8 Characters)", type="password", value="", key="tc_pass")
-                tc_submit = st.form_submit_button("🔓 Verify Code & Register", use_container_width=True)
+                tc_submit = st.form_submit_button("🔓 Verify Code & Register", use_container_width=True, type="primary")
 
             if tc_submit:
                 tc_key = tc_username.strip().lower()
@@ -1820,7 +1923,7 @@ if st.session_state.current_user is None:
             with st.form("forgot_step1_form"):
                 fp_username = st.text_input("Your Username", value="", key="fp_user")
                 fp_email = st.text_input("Your Registered Email", value="", key="fp_email")
-                fp_submit = st.form_submit_button("📧 Send Reset Code to Email", use_container_width=True)
+                fp_submit = st.form_submit_button("📧 Send Reset Code to Email", use_container_width=True, type="primary")
 
             if fp_submit:
                 fp_key = fp_username.strip().lower()
@@ -1856,7 +1959,7 @@ if st.session_state.current_user is None:
                 fp2_username = st.text_input("Username", value="", key="fp2_user")
                 fp2_code = st.text_input("Enter 6-Digit Reset Code", value="", key="fp2_code")
                 fp2_newpass = st.text_input("New Password (Min 8 Characters)", type="password", value="", key="fp2_pass")
-                fp2_submit = st.form_submit_button("🔐 Reset Password", use_container_width=True)
+                fp2_submit = st.form_submit_button("🔐 Reset Password", use_container_width=True, type="primary")
 
             if fp2_submit:
                 fp2_key = fp2_username.strip().lower()
@@ -2254,7 +2357,7 @@ if user_role == "Teacher":
                     new_place = st.text_input("Location / Place", value="Coimbatore")
 
                 new_phone = st.text_input("Contact Phone Number *", placeholder="e.g. 9876543210")
-                submit_add = st.form_submit_button("➕ Save Student to Database", use_container_width=True)
+                submit_add = st.form_submit_button("➕ Save Student to Database", use_container_width=True, type="primary")
 
             if submit_add:
                 new_cid_clean = str(new_cid).strip().upper()
@@ -2306,7 +2409,7 @@ if user_role == "Teacher":
                     edit_place = st.text_input("Location / Place", value=str(curr_row.get('Place', 'Coimbatore')))
                 
                 edit_phone = st.text_input("Contact Phone Number", value=str(curr_row.get('Phone Number', '')))
-                submit_edit = st.form_submit_button("💾 Save Updates to Database", use_container_width=True)
+                submit_edit = st.form_submit_button("💾 Save Updates to Database", use_container_width=True, type="primary")
 
             if submit_edit:
                 students_df.loc[students_df['Child ID'].astype(str) == str(selected_edit_cid), 'Child Name'] = edit_cname.strip()
@@ -2458,7 +2561,7 @@ if user_role == "Teacher":
                         )
                         attendance_inputs[cid] = status
 
-                submit_att = st.form_submit_button(f"💾 Save Attendance for {selected_date}", use_container_width=True)
+                submit_att = st.form_submit_button(f"💾 Save Attendance for {selected_date}", use_container_width=True, type="primary")
 
             if submit_att:
                 st.session_state.attendance_store[selected_date] = attendance_inputs
@@ -2755,7 +2858,7 @@ if user_role == "Teacher":
 
         with st.form("teacher_msg_form"):
             t_message = st.text_area("Write message to Parent", placeholder="Type progress note or reply...")
-            t_submit = st.form_submit_button("✉️ Send Message to Parent")
+            t_submit = st.form_submit_button("✉️ Send Message to Parent", use_container_width=True, type="primary")
 
         if t_submit:
             if t_message.strip():
@@ -2874,10 +2977,10 @@ if user_role == "Teacher":
                 st.markdown(f"""
                 <div class="custom-card">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 1.05rem; font-weight: 700; color: #f8fafc;">👤 {udata['fullName']}</span>
+                        <span class="card-heading" style="font-size: 1.05rem; font-weight: 700;">👤 {udata['fullName']}</span>
                         <span class="badge {role_badge}">{udata['role']}</span>
                     </div>
-                    <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.3rem;">
+                    <div class="card-subtext" style="font-size: 0.85rem; margin-top: 0.3rem;">
                         Username: <b>{uname}</b>
                         {f' | Child ID: <b>{udata.get("childId", "")}</b>' if udata.get("childId") else ''}
                         {f' | Email: <b>{udata.get("email", "")}</b>' if udata.get("email") else ''}
@@ -2897,7 +3000,7 @@ if user_role == "Teacher":
             with st.form("admin_reset_form"):
                 reset_user = st.selectbox("Select User", options=list(users.keys()))
                 reset_new_pass = st.text_input("New Password (Min 8 Characters)", type="password", key="admin_reset_pass")
-                reset_submit = st.form_submit_button("🔐 Reset Password", use_container_width=True)
+                reset_submit = st.form_submit_button("🔐 Reset Password", use_container_width=True, type="primary")
             if reset_submit:
                 if not reset_new_pass:
                     st.warning("Please enter a new password.")
@@ -2947,7 +3050,7 @@ if user_role == "Teacher":
             cp_old = st.text_input("Current Password", type="password", key="cp_old")
             cp_new = st.text_input("New Password (Min 8 Characters)", type="password", key="cp_new")
             cp_confirm = st.text_input("Confirm New Password", type="password", key="cp_confirm")
-            cp_submit = st.form_submit_button("🔐 Change Password", use_container_width=True)
+            cp_submit = st.form_submit_button("🔐 Change Password", use_container_width=True, type="primary")
 
         if cp_submit:
             uname = current_user.get("username", "")
@@ -3285,7 +3388,7 @@ else:
 
         with st.form("parent_msg_form"):
             p_message = st.text_area("Write message to Class Teacher", placeholder="Ask about health, diet, or progress...")
-            p_submit = st.form_submit_button("✉️ Send Message to Teacher")
+            p_submit = st.form_submit_button("✉️ Send Message to Teacher", use_container_width=True, type="primary")
 
         if p_submit:
             if p_message.strip():
@@ -3348,7 +3451,7 @@ else:
             cp_old = st.text_input("Current Password", type="password", key="p_cp_old")
             cp_new = st.text_input("New Password (Min 8 Characters)", type="password", key="p_cp_new")
             cp_confirm = st.text_input("Confirm New Password", type="password", key="p_cp_confirm")
-            cp_submit = st.form_submit_button("🔐 Change Password", use_container_width=True)
+            cp_submit = st.form_submit_button("🔐 Change Password", use_container_width=True, type="primary")
 
         if cp_submit:
             uname = current_user.get("username", "")
