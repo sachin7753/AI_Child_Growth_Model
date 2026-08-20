@@ -1211,6 +1211,145 @@ if st.session_state.current_user is None:
     st.stop()
 
 
+# ------------------- ABOUT PAGE COMPONENT -------------------
+def render_about_page():
+    st.markdown("<div class='section-header'>ℹ️ About AI Child Growth Advisor & Development Team</div>", unsafe_allow_html=True)
+
+    # Lead Developers Card
+    st.markdown("### 👨‍💻 Project Development Team")
+    col_dev1, col_dev2 = st.columns(2)
+    with col_dev1:
+        st.markdown("""
+        <div class="custom-card" style="border-top: 4px solid #6366f1; text-align: center; padding: 1.5rem 1rem;">
+            <div style="font-size: 3rem;">👨‍💻</div>
+            <div style="font-size: 1.35rem; font-weight: 800; color: #f8fafc; margin-top: 0.4rem; letter-spacing: 0.02em;">SACHIN M</div>
+            <div style="font-size: 0.88rem; color: #818cf8; font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;">Lead AI Engineer & System Architect</div>
+            <div style="font-size: 0.88rem; color: #94a3b8; margin-top: 0.6rem; line-height: 1.5;">
+                Deep Learning Model Optimization, GrowthNet 2.0 Neural Network, WHO LMS Standards Engine & Backend Systems.
+            </div>
+            <div style="margin-top: 0.8rem;">
+                <span class="badge badge-info">PyTorch & Deep Learning</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col_dev2:
+        st.markdown("""
+        <div class="custom-card" style="border-top: 4px solid #38bdf8; text-align: center; padding: 1.5rem 1rem;">
+            <div style="font-size: 3rem;">👨‍💻</div>
+            <div style="font-size: 1.35rem; font-weight: 800; color: #f8fafc; margin-top: 0.4rem; letter-spacing: 0.02em;">VISHAL KANNAN S I</div>
+            <div style="font-size: 0.88rem; color: #38bdf8; font-weight: 700; text-transform: uppercase; margin-top: 0.2rem;">Lead Full-Stack Developer & UI/UX Architect</div>
+            <div style="font-size: 0.88rem; color: #94a3b8; margin-top: 0.6rem; line-height: 1.5;">
+                Interactive AI Meal Planner, Clinical Pediatric Standards Integration, Streamlit Dashboard UI & Multi-Portal Architecture.
+            </div>
+            <div style="margin-top: 0.8rem;">
+                <span class="badge badge-healthy">Full-Stack & UX</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # Details about the site
+    st.markdown("### 🌐 About the Platform")
+    st.markdown("""
+    The **AI Child Growth Advisor & Pediatric Health Portal** is an advanced health and nutrition monitoring platform created specifically for **children aged 1 to 5 years (12–60 months)**. 
+
+    Combining official **World Health Organization (WHO) Child Growth Standards (0–5y)** and **CDC/IAP pediatric BMI percentiles** with a deep neural network (**GrowthNet 2.0**), this platform bridges pediatric medical benchmarks with actionable, parent-friendly daily care and nutrition planning.
+    """)
+
+    st.markdown("### 🚀 Core Platform Modules")
+    m_col1, m_col2 = st.columns(2)
+    with m_col1:
+        st.markdown("""
+        <div class="custom-card">
+            <div style="font-weight: 700; color: #818cf8; font-size: 1.05rem;">🧠 PyTorch GrowthNet 2.0 AI Engine</div>
+            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+                4-layer deep neural network trained on 29,000+ pediatric benchmark cases with 9 domain-engineered features achieving <b>99.0% diagnostic test accuracy</b> across all WHO health classifications.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="custom-card">
+            <div style="font-weight: 700; color: #38bdf8; font-size: 1.05rem;">🍽️ Interactive AI Daily Meal Planner</div>
+            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+                Structured 5-meal daily schedules (Breakfast, Snack, Lunch, Snack, Dinner) tailored to ICMR-NIN RDA 2024, AskNestle, and Harvard Healthy Eating Plate guidelines with Precision Nutrition hand-size portion guides.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="custom-card">
+            <div style="font-weight: 700; color: #34d399; font-size: 1.05rem;">📋 Cumulative Multi-Day Attendance</div>
+            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+                Persistent attendance tracking with individual student cumulative percentage scoring, low-attendance alerts (<75%), and academic year reset tools.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m_col2:
+        st.markdown("""
+        <div class="custom-card">
+            <div style="font-weight: 700; color: #f59e0b; font-size: 1.05rem;">🎓 Student Database Management (CRUD)</div>
+            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+                Live Excel & JSON registry synchronization allowing teachers to add, edit, and delete student records with instant roster export.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="custom-card">
+            <div style="font-weight: 700; color: #ec4899; font-size: 1.05rem;">📄 Automated Clinical PDF Reports</div>
+            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+                Instant ReportLab PDF generation for growth analysis curves and downloadable printable 5-meal daily nutrition schedules.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div class="custom-card">
+            <div style="font-weight: 700; color: #a855f7; font-size: 1.05rem;">💬 Secure Parent-Teacher Messaging</div>
+            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.3rem;">
+                Direct two-way progress notes and child dietary coordination between class teachers and parents.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # Technology Stack
+    st.markdown("### 🛠️ Built With Modern Technology")
+    tech_cols = st.columns(6)
+    tech_cols[0].markdown("<div class='custom-card' style='text-align:center; padding:0.6rem;'>🔥<br><b>PyTorch</b></div>", unsafe_allow_html=True)
+    tech_cols[1].markdown("<div class='custom-card' style='text-align:center; padding:0.6rem;'>🐍<br><b>Python 3.11</b></div>", unsafe_allow_html=True)
+    tech_cols[2].markdown("<div class='custom-card' style='text-align:center; padding:0.6rem;'>⚡<br><b>Streamlit</b></div>", unsafe_allow_html=True)
+    tech_cols[3].markdown("<div class='custom-card' style='text-align:center; padding:0.6rem;'>🔬<br><b>Scikit-Learn</b></div>", unsafe_allow_html=True)
+    tech_cols[4].markdown("<div class='custom-card' style='text-align:center; padding:0.6rem;'>📄<br><b>ReportLab</b></div>", unsafe_allow_html=True)
+    tech_cols[5].markdown("<div class='custom-card' style='text-align:center; padding:0.6rem;'>📊<br><b>Pandas</b></div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # Official Medical and Legal Disclaimer
+    st.markdown("### ⚠️ Official Medical & Legal Disclaimer")
+    st.markdown("""
+    <div style="background: rgba(239, 68, 68, 0.08); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 14px; padding: 1.25rem 1.5rem; line-height: 1.7; color: #e2e8f0;">
+        <div style="font-size: 1.1rem; font-weight: 800; color: #f87171; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span>🛡️</span> Medical & Legal Notice
+        </div>
+        <p style="margin: 0 0 0.6rem 0; font-size: 0.92rem;">
+            <b>1. Informational & Screening Purpose Only:</b> The AI Child Growth Advisor, its neural network predictions (GrowthNet 2.0), WHO percentile curves, nutritional meal recommendations, and PDF growth charts are generated for informational screening and growth-monitoring support only.
+        </p>
+        <p style="margin: 0 0 0.6rem 0; font-size: 0.92rem;">
+            <b>2. Not Clinical Medical Advice:</b> This application does <b>not</b> provide medical diagnosis, therapeutic prescription, or clinical treatment plans. It is not intended to replace consultation, diagnosis, or treatment by a licensed pediatrician, healthcare provider, or clinical pediatric dietitian.
+        </p>
+        <p style="margin: 0; font-size: 0.92rem;">
+            <b>3. Parental & Clinical Consultation:</b> Parents and educators should always seek the direct advice of a qualified pediatrician regarding any medical conditions, feeding difficulties, severe stunting/wasting flags, allergic reactions, or specific developmental health concerns.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
 # ------------------- LOGGED IN SESSION & SIDEBAR -------------------
 current_user = st.session_state.get("current_user")
 if not current_user:
@@ -1255,6 +1394,7 @@ if user_role == "Teacher":
         ("📅 Meal Schedule",          "meal"),
         ("💬 Messages",               "messages"),
         ("🛡️ Admin Panel",            "admin_panel"),
+        ("ℹ️ About Project",          "about"),
         ("⚙️ Account Settings",       "settings"),
     ]
     nav_label_map = {
@@ -1269,6 +1409,7 @@ if user_role == "Teacher":
         "meal":       "📅 Weekly Meal Schedule",
         "messages":   "💬 Parent-Teacher Messages",
         "admin_panel": "🛡️ Admin Panel",
+        "about":       "ℹ️ About the Project & Team",
         "settings":    "⚙️ Account Settings",
     }
 else:
@@ -1281,6 +1422,7 @@ else:
         ("🥗 Food Recommendations",   "food"),
         ("📅 Meal Schedule",          "meal"),
         ("💬 Chat with Teacher",      "messages"),
+        ("ℹ️ About Project",          "about"),
         ("⚙️ Account Settings",       "settings"),
     ]
     nav_label_map = {
@@ -1292,6 +1434,7 @@ else:
         "food":       "🥗 Food Recommendations",
         "meal":       "📅 Weekly Meal Schedule",
         "messages":   "💬 Chat with Teacher",
+        "about":      "ℹ️ About the Project & Team",
         "settings":   "⚙️ Account Settings",
     }
 
@@ -2625,6 +2768,9 @@ elif nav_selection == "📅 Weekly Meal Schedule":
                 </div>
             </div>
             """, unsafe_allow_html=True)
+
+elif nav_selection == "ℹ️ About the Project & Team":
+    render_about_page()
 
 # ------------------- FOOTER -------------------
 st.markdown("---")

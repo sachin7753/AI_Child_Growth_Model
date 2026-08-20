@@ -1,54 +1,69 @@
-# AI Child Growth Advisor — Streamlit Web Application
+# AI Child Growth Advisor & Pediatric Health Portal
 
-This repository contains the complete Streamlit frontend web application for the **AI Child Growth Advisor** platform, replacing the Wix website (`https://vishalkannan070.wixstudio.com/my-site`).
+An intelligent pediatric health, growth screening, and nutritional care platform tailored for children aged **1 to 5 years (12–60 months)**.
 
-## Live Apps & Links
+---
 
-- **Main Streamlit Frontend Application:** Rebuild of Wix site features including Children Directory, Attendance System, Food Recommendations, Weekly Meal Schedule, and Parent Messaging.
-- **Deployed AI Growth Assessment App:** [`https://aigrowthchildtracker.streamlit.app/`](https://aigrowthchildtracker.streamlit.app/) (Handles WHO percentiles, PyTorch GrowthNet model predictions, PDF report generation with charts, Wix Media upload, and Gmail SMTP email delivery).
+## 👨‍💻 Project Development Team
 
-## Features Overview
+- **SACHIN M** — *Lead AI Engineer & System Architect* (Deep Learning Model Optimization, GrowthNet 2.0 Neural Network, WHO LMS Standards Engine & Backend Systems)
+- **VISHAL KANNAN S I** — *Lead Full-Stack Developer & UI/UX Architect* (Interactive AI Meal Planner, Clinical Pediatric Standards Integration, Streamlit Multi-Portal Architecture & UI/UX Design)
 
-1. **🏠 Home / Overview:**
-   - Platform mission & key stats (30 Enrolled Children, WHO Growth Standards, 6-Day Meal Plans).
-   - Direct launch CTA button redirecting to `https://aigrowthchildtracker.streamlit.app/`.
+---
 
-2. **👶 Children Directory:**
-   - Enrolled students master list loaded from `Child_Attendance_Data(1).xlsx` (30 children, C001 - C030).
-   - Search by Child ID, Name, Parent, or Location.
-   - Student profile cards with quick AI assessment launcher buttons.
+## 🌟 Platform Capabilities & Features
 
-3. **📋 Daily Attendance System:**
-   - Teacher attendance sheet for marking Present/Absent per student.
-   - Real-time attendance rate metrics (% Present / % Absent).
-   - Local JSON storage (`attendance_records.json`) and history log.
+1. **🧠 PyTorch GrowthNet 2.0 AI Engine**:
+   - Deep Multi-Layer Perceptron trained on 29,000+ clinical benchmark cases with 9 domain-engineered features (`[age_months, height, weight, sex, bmi, hfa_p, wfa_p, wfh_p, bfa_p]`).
+   - Achieves **99.0% diagnostic test accuracy** across WHO growth classifications.
 
-4. **🥗 Food Recommendations:**
-   - Sourced from `Food+Recommendations.csv`.
-   - Category filtering (*Status-Based* vs *Age-Based Guides*).
-   - Detailed cards for Goals, Recommended Foods, How to Eat, Snack Ideas, Avoid List, Activity Tips, and Key Nutrients.
+2. **📏 Multi-Axial WHO & CDC/IAP Pediatric Standards**:
+   - Computes Box-Cox Cole & Green LMS Z-scores and exact percentiles for Height-for-Age (HFA), Weight-for-Age (WFA), Weight-for-Height (WFH), and BMI-for-Age (BFA).
+   - Classifies 6 pediatric categories: *Underweight / Wasted*, *Healthy*, *Overweight*, *Obese*, *Stunted*, and *Stunted & Underweight*.
 
-5. **📅 Weekly Meal Schedule:**
-   - Sourced from `MealSchedule.csv`.
-   - Monday–Saturday meal plans with Calorie counts (kcal), Protein (g), Carbs (g), Fat (g), and notes.
+3. **🍽️ Interactive AI Daily Meal Planner**:
+   - Grounded in **ICMR-NIN RDA 2024**, **AskNestle Meal Plan**, **USDA MyPlate**, and **Harvard Healthy Eating Plate**.
+   - Generates age-calibrated 5-meal daily schedules (Breakfast, Mid-Morning Snack, Lunch, Evening Snack, Dinner) with macro/micronutrient breakdowns and Precision Nutrition hand-size portion guides (Palm, Fist, Cupped Hand, Thumb).
+   - Generates downloadable printable Daily Meal Plan PDF charts.
 
-6. **🤖 AI Growth Model Hub:**
-   - Explains PyTorch `GrowthNet` architecture and WHO percentile calculation engine.
-   - Direct link buttons launching `https://aigrowthchildtracker.streamlit.app/`.
+4. **🎓 Student Database Management (CRUD)**:
+   - Full database interface for teachers to **Add New Students**, **Edit / Update Records**, and **Delete Students** with real-time Excel (`Child_Attendance_Data(1).xlsx`) and JSON synchronization.
 
-7. **💬 Parent-Teacher Messaging:**
-   - Select child ID to view and record parent-teacher communication notes (saved to `messages.json`).
+5. **📋 Multi-Day Cumulative Attendance System**:
+   - Permanent attendance history tracking across all recorded school dates.
+   - Computes individual student cumulative attendance percentages with color-coded badges (🟢 Excellent ≥90%, 🟡 Good 75–89%, 🔴 At Risk <75%).
+   - Academic Year Attendance Reset feature for clean restarts.
 
-## How to Run Locally
+6. **💬 Direct Parent-Teacher Communication**:
+   - Real-time messaging stream between teachers and parents for individual progress notes and dietary coordination.
+
+7. **📄 Automated PDF Growth & Nutrition Reports**:
+   - Instant high-resolution ReportLab PDF generation featuring growth percentile curves, AI diagnostic summaries, and tailored clinical guidance.
+
+---
+
+## ⚠️ Official Medical & Legal Disclaimer
+
+> **IMPORTANT NOTICE:**  
+> The **AI Child Growth Advisor**, its neural network predictions, WHO percentile curves, dietary recommendations, and PDF growth charts are generated for **educational, nutritional guidance, and informational screening support only**.  
+>  
+> This platform **does not provide medical diagnosis, therapeutic prescription, or clinical treatment**. It is not a substitute for clinical judgment or professional medical consultation with a licensed pediatrician or healthcare professional. Always consult a qualified pediatrician for medical advice regarding a child's development, health conditions, or nutritional deficiencies.
+
+---
+
+## 🚀 How to Run Locally
 
 ```bash
-# 1. Clone/Navigate to workspace
-cd "c:\Users\ELCOT\Desktop\final stream"
+# 1. Clone repository
+git clone https://github.com/sachin7753/AI_Child_Growth_Model.git
+cd AI_Child_Growth_Model
 
-# 2. Run with uv virtualenv
-uv venv
-uv pip install streamlit openpyxl pandas reportlab matplotlib torch scikit-learn optuna joblib
+# 2. Activate virtual environment
+.\.venv\Scripts\Activate.ps1
 
-# 3. Launch Streamlit app
-.venv\Scripts\streamlit run app.py
+# 3. Run Automated Comprehensive Test Suite
+python test_model.py
+
+# 4. Launch Streamlit Application
+streamlit run app.py
 ```
