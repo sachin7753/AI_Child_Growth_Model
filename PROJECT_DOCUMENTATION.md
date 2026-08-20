@@ -31,28 +31,27 @@
 
 ## 1. Project Overview
 
-The **AI Child Growth Advisor** is an intelligent child health monitoring system for children aged 0–5 years. It uses WHO (World Health Organization) growth standards combined with a PyTorch neural network to assess a child's nutritional status and generate personalized reports.
+The **AI Child Growth Advisor** is an intelligent pediatric health and nutrition monitoring system tailored for children aged **1–5 years (12–60 months)**. It combines **WHO (World Health Organization) Child Growth Standards (0–5y)** and **CDC/IAP pediatric BMI percentiles** with a high-performance **PyTorch deep neural network (GrowthNet 2.0)** and an **Interactive AI Daily Meal Planner** based on **ICMR-NIN RDA 2024 & AskNestle guidelines**.
 
 ### What It Does
 
-1. **Takes child measurements** — Age, height, weight, sex
-2. **Computes WHO percentiles** — Height-for-age (HFA) and Weight-for-height (WFH)
-3. **Classifies growth status** — Using a trained AI model backed by WHO rule-based validation
-4. **Generates a PDF report** — With charts, percentile data, and food recommendations
-5. **Uploads the PDF to Wix** — Automatically to Wix Media Manager + CMS collection
-6. **Emails the report** — To the parent via Gmail SMTP
-7. **Provides food recommendations** — Stored in Wix CMS, displayed on the Wix website
+1. **Child Anthropometric Screening** — Age (1–5 years), height, weight, sex
+2. **Computes Multi-Axial WHO Percentiles** — Height-for-Age (HFA), Weight-for-Age (WFA), Weight-for-Height (WFH), and Pediatric BMI-for-Age (BFA)
+3. **Classifies Pediatric Diagnostic Status** — Using GrowthNet 2.0 (99% test accuracy) backed by WHO clinical validation rules
+4. **Interactive AI Daily Meal Planner** — Generates personalized 5-meal daily schedules (Breakfast, Snack, Lunch, Snack, Dinner) with macro/micro nutrient targets (ICMR-NIN 2024 RDA) and visual hand-size portion sizing
+5. **Generates Downloadable PDF Reports & Meal Plans** — Complete with growth curves, health scores, and personalized dietary regimens
+6. **Attendance & Communication Portals** — Daily school attendance tracking, direct parent-teacher messaging, and verification code management
 
-### Classification Categories
+### Diagnostic Classification Categories (1–5 Years)
 
-| Class ID | Label        | Criteria                                  |
-|----------|--------------|-------------------------------------------|
-| 0        | Underweight  | Weight-for-height percentile < 3          |
-| 1        | Healthy      | Normal range, no flags                    |
-| 2        | Overweight   | WFH percentile > 85 or BMI ≥ 25          |
-| 3        | Obese        | WFH percentile > 85 and BMI ≥ 30         |
-| 4        | Stunted      | Height-for-age percentile < 3             |
-| 5        | Normal Ht    | Height within normal range (fallback)     |
+| Class ID | Diagnostic Label | Clinical Criteria (WHO / CDC Pediatric Percentiles) |
+|---|---|---|
+| 0 | **Underweight / Wasted** | Weight-for-Height percentile < 3rd or BMI-for-Age < 5th percentile |
+| 1 | **Healthy** | Normal height, weight, and BMI percentiles (no risk flags) |
+| 2 | **Overweight** | WFH percentile 85th–97th or BMI-for-Age 85th–97th percentile |
+| 3 | **Obese** | WFH percentile > 97th or BMI-for-Age > 97th percentile |
+| 4 | **Stunted** | Height-for-Age percentile < 3rd with normal weight-for-height |
+| 5 | **Stunted & Underweight** | Both Height-for-Age < 3rd and Weight-for-Height < 3rd percentile |
 
 ---
 

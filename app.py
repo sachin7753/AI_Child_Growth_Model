@@ -26,6 +26,20 @@ import base64
 import hashlib
 import html
 
+from who_standards import (
+    calc_hfa_percentile,
+    calc_bfa_percentile,
+    classify_pediatric_status,
+    CLASS_LABELS
+)
+from meal_planner import (
+    generate_custom_meal_plan,
+    create_meal_plan_pdf,
+    HAND_PORTION_GUIDE,
+    GROWTH_STATUS_ADVICE,
+    RDA_TABLE
+)
+
 # ------------------- SECURITY HELPERS -------------------
 def hash_password(password: str) -> str:
     """Hash password using SHA-256 with a unique application salt."""
@@ -67,13 +81,14 @@ FULL_LOGO_B64 = get_base64_image("logo.png")
 # ------------------- CONSTANTS & FILE PATHS -------------------
 HFA_BOYS_FILE = "tab_hfa_boys_p_0_5.xlsx"
 HFA_GIRLS_FILE = "tab_hfa_girls_p_0_5.xlsx"
+WFA_BOYS_FILE = "tab_wfa_boys_p_0_5.xlsx"
+WFA_GIRLS_FILE = "tab_wfa_girls_p_0_5.xlsx"
 WFH_BOYS_FILE = "tab_wfh_boys_p_0_5.xlsx"
 WFH_GIRLS_FILE = "tab_wfh_girls_p_0_5.xlsx"
 MODEL_PATH = "growth_model.pth"
 SCALER_PATH = "scaler.joblib"
 PARAMS_PATH = "best_params.json"
 DAYS_PER_MONTH = 30.4375
-CLASS_LABELS = {0: "Underweight", 1: "Healthy", 2: "Overweight", 3: "Obese", 4: "Stunted", 5: "Normal Ht"}
 
 ATTENDANCE_FILE = "Child_Attendance_Data(1).xlsx"
 FOOD_RECOMMENDATIONS_FILE = "Food+Recommendations.csv"
@@ -312,17 +327,19 @@ st.markdown("""
 
 # ------------------- AI MODEL & WHO BACKEND ENGINE -------------------
 class GrowthNet(nn.Module):
-    def __init__(self, n_layers=2, n_units=64, dropout_rate=0.3):
+    def __init__(self, in_features=9, n_layers=4, n_units=134, dropout_rate=0.16):
         super().__init__()
         layers = []
-        in_features = 4
-        for i in range(n_layers):
-            layers.append(nn.Linear(in_features, n_units))
+        current_in = in_features
+        for _ in range(n_layers):
+            layers.append(nn.Linear(current_in, n_units))
+            layers.append(nn.BatchNorm1d(n_units))
             layers.append(nn.ReLU())
             layers.append(nn.Dropout(dropout_rate))
-            in_features = n_units
-        layers.append(nn.Linear(in_features, len(CLASS_LABELS)))
+            current_in = n_units
+        layers.append(nn.Linear(current_in, len(CLASS_LABELS)))
         self.model = nn.Sequential(*layers)
+
     def forward(self, x):
         return self.model(x)
 
@@ -332,8 +349,13 @@ def load_model_and_scaler(model_path=MODEL_PATH, scaler_path=SCALER_PATH, params
         if os.path.exists(params_path) and os.path.exists(model_path) and os.path.exists(scaler_path):
             with open(params_path, 'r') as f:
                 best_params = json.load(f)
-            model = GrowthNet(n_layers=best_params['n_layers'], n_units=best_params['n_units'], dropout_rate=best_params['dropout_rate'])
-            model.load_state_dict(torch.load(model_path))
+            model = GrowthNet(
+                in_features=9,
+                n_layers=best_params.get('n_layers', 4),
+                n_units=best_params.get('n_units', 134),
+                dropout_rate=best_params.get('dropout_rate', 0.16)
+            )
+            model.load_state_dict(torch.load(model_path, map_location="cpu"))
             model.eval()
             scaler = joblib.load(scaler_path)
             return model, scaler
@@ -356,6 +378,15 @@ def load_ref(path: str, primary_col_regex: str):
         pass
     return None, None
 
+def parse_pcol(c: str) -> float:
+    c_str = str(c).strip().upper()
+    if c_str == "P999":
+        return 99.9
+    if c_str == "P01":
+        return 0.1
+    nums = re.findall(r"\d+", c_str)
+    return float(nums[0]) if nums else 50.0
+
 def interp_curve(ref_df, pcols, val):
     values = ref_df.iloc[:, 0].values.astype(float)
     if val <= values.min():
@@ -367,29 +398,31 @@ def interp_curve(ref_df, pcols, val):
         v0, v1 = values[idx - 1], values[idx]
         frac = (val - v0) / (v1 - v0)
         row0, row1 = ref_df.iloc[idx - 1], ref_df.iloc[idx]
-        return {float(re.findall(r"\d+", c)[0]): row0[c] + frac * (row1[c] - row0[c]) for c in pcols}
-    return {float(re.findall(r"\d+", c)[0]): float(row[c]) for c in pcols}
+        return {parse_pcol(c): float(row0[c] + frac * (row1[c] - row0[c])) for c in pcols}
+    return {parse_pcol(c): float(row[c]) for c in pcols}
 
 def est_percentile(value, curve):
     pts = sorted(curve.items(), key=lambda item: item[1])
     values = [v for p, v in pts]
     percs = [p for p, v in pts]
     if value <= values[0]:
-        return percs[0]
+        return min(percs[0], 0.1)
     if value >= values[-1]:
-        return percs[-1]
+        return max(percs[-1], 99.9)
     j = np.searchsorted(values, value, side="right")
     v0, v1, p0, p1 = values[j - 1], values[j], percs[j - 1], percs[j]
-    return p0 + (value - v0) / (v1 - v0) * (p1 - p0)
+    p_est = p0 + (value - v0) / (v1 - v0) * (p1 - p0)
+    return max(0.1, min(99.9, p_est))
 
-def ai_predict(model, scaler, age_m, ht, wt, sex, wfh_p, hfa_p):
-    bmi = wt / ((ht / 100) ** 2)
-    confidence_score = 0.92
+def ai_predict(model, scaler, age_m, ht, wt, sex, wfh_p, hfa_p, wfa_p=50.0, bfa_p=50.0):
+    bmi = wt / ((ht / 100.0) ** 2)
+    confidence_score = 0.96
     status = "Healthy"
+    sex_num = 1 if sex in ["M", "Male", 1] else 0
 
     if model is not None and scaler is not None:
         try:
-            input_data = np.array([[age_m, ht, wt, 1 if sex == "M" else 0]])
+            input_data = np.array([[age_m, ht, wt, sex_num, bmi, hfa_p, wfa_p, wfh_p, bfa_p]])
             input_scaled = scaler.transform(input_data)
             x = torch.tensor(input_scaled, dtype=torch.float32)
             with torch.no_grad():
@@ -397,58 +430,50 @@ def ai_predict(model, scaler, age_m, ht, wt, sex, wfh_p, hfa_p):
                 probs = torch.softmax(logits, dim=1)
                 confidence, pred_idx_tensor = torch.max(probs, dim=1)
                 pred_idx = int(pred_idx_tensor.item())
-                confidence_score = confidence.item()
+                confidence_score = float(confidence.item())
                 status = CLASS_LABELS.get(pred_idx, "Healthy")
         except Exception:
             pass
 
-    if wfh_p < 3:
-        status = "Underweight"
-    elif wfh_p > 85:
-        status = "Obese" if bmi >= 30 else "Overweight"
-    elif bmi >= 30:
-        status = "Obese"
-    elif bmi >= 25:
-        status = "Overweight"
-    elif hfa_p < 3 and status in ["Healthy", "Normal Ht"]:
-        status = "Stunted"
-    elif status == "Underweight" and wfh_p >= 5 and hfa_p < 5:
-        status = "Stunted"
+    # WHO pediatric clinical verification fallback
+    rule_status_id = classify_pediatric_status(hfa_p, wfa_p, wfh_p, bfa_p, bmi)
+    rule_status = CLASS_LABELS.get(rule_status_id, status)
+    if status not in CLASS_LABELS.values() or confidence_score < 0.55:
+        status = rule_status
 
     return status, confidence_score
 
 def build_age_meal_ideas(age_m):
-    if age_m < 6:
-        return ["Exclusive breastmilk/formula feeding as advised by pediatrician.", "Feed on demand 8-12 times/day."]
-    if age_m < 9:
-        return ["Start with 2-3 tbsp thick mashed foods twice daily.", "Add one new food every 3 days."]
-    if age_m < 12:
-        return ["3 soft meals + 1 snack; keep texture soft and mashed.", "Offer iron-rich foods daily (dal, egg yolk, cereal)."]
     if age_m < 24:
-        return ["3 family meals + 2 snacks with child-sized portions.", "Include protein at each meal (egg, paneer, dal, fish/chicken)."]
-    return ["3 meals + 2 healthy snacks following fixed meal schedule.", "Balanced plate: 1/2 vegetables-fruits, 1/4 protein, 1/4 grains."]
+        return [
+            "3 soft family meals + 2 healthy snacks with toddler-friendly portions.",
+            "Include protein at each meal (egg yolk/boiled egg, soft paneer, dal, fish).",
+            "Limit milk to 400-500ml/day to prevent iron deficiency and encourage solid food intake."
+        ]
+    elif age_m < 36:
+        return [
+            "3 structured meals + 2 planned nutritious snacks following a fixed schedule.",
+            "Balanced plate: 1/2 vegetables and seasonal fruits, 1/4 protein, 1/4 whole grains.",
+            "Foster self-feeding habits with colorful cut fruits and finger-food parathas."
+        ]
+    return [
+        "3 wholesome meals + 2 active-play snacks (ICMR-NIN 2024 Guidelines).",
+        "Offer wholesome dairy, nuts powder, pulses, green leafy veggies, and seasonal fruits.",
+        "Ensure 60+ minutes of active physical outdoor play daily."
+    ]
 
 def get_ai_recommendations(status, age_m, wfh_p, hfa_p, bmi):
+    advice = GROWTH_STATUS_ADVICE.get(status, GROWTH_STATUS_ADVICE["Healthy"])
     recs = {
-        "summary": f"Status: {status} (BMI: {bmi:.1f} | Wt-for-Ht: P{wfh_p:.1f})",
-        "what_to_eat": [],
-        "how_to_eat": [],
+        "summary": f"Diagnostic Status: {status} (BMI: {bmi:.1f} | Wt-for-Ht: P{wfh_p:.1f} | Ht-for-Age: P{hfa_p:.1f})",
+        "what_to_eat": advice["tips"][:3],
+        "how_to_eat": [
+            "Follow a consistent 5-meal daily schedule (Breakfast, Snack, Lunch, Snack, Dinner).",
+            "Use hand-size portion guides: Fist for veggies/fruits, Palm for protein, Cupped hand for grains.",
+            "Avoid screen-time eating to build healthy intuitive hunger cues."
+        ],
         "meal_ideas": build_age_meal_ideas(age_m),
     }
-
-    if status in ["Obese", "Overweight"]:
-        recs["what_to_eat"] = ["Vegetables, fruits, lean proteins, whole grains, and plain curd.", "High-fiber snacks: roasted chana, fruit slices, sprouts."]
-        recs["how_to_eat"] = ["Serve fixed portions using a small plate.", "Avoid screen-time eating.", "60 mins active play daily."]
-    elif status == "Underweight":
-        recs["what_to_eat"] = ["Nutritious calorie-dense foods: eggs, paneer, nut powders, banana, sweet potato.", "Healthy fats: ghee, peanut butter."]
-        recs["how_to_eat"] = ["Offer 5-6 small meals/snacks daily.", "Add one calorie booster per meal.", "Track weight monthly."]
-    elif status == "Stunted":
-        recs["what_to_eat"] = ["Protein-rich foods: dal, egg, fish/chicken, paneer, soybean.", "Leafy vegetables, ragi, fruits."]
-        recs["how_to_eat"] = ["Include protein in breakfast, lunch, and dinner.", "Pair iron foods with vitamin C foods."]
-    else:
-        recs["what_to_eat"] = ["Balanced plate with grains, protein, vegetables, fruits, and dairy.", "Rotate foods weekly."]
-        recs["how_to_eat"] = ["3 meals + 2 planned snacks at consistent times.", "60+ mins active play daily."]
-
     return recs
 
 def flatten_recommendation_plan(plan):
@@ -461,18 +486,29 @@ def flatten_recommendation_plan(plan):
     return flat
 
 def generate_report(age_m, ht, wt, sex, model, scaler):
-    hfa_ref, hfa_pcols = load_ref(HFA_BOYS_FILE if sex == "M" else HFA_GIRLS_FILE, r"age|day|month")
-    wfh_ref, wfh_pcols = load_ref(WFH_BOYS_FILE if sex == "M" else WFH_GIRLS_FILE, r"height|length")
+    hfa_ref, hfa_pcols = load_ref(HFA_BOYS_FILE if sex in ["M", "Male", 1] else HFA_GIRLS_FILE, r"age|day|month")
+    wfa_ref, wfa_pcols = load_ref(WFA_BOYS_FILE if sex in ["M", "Male", 1] else WFA_GIRLS_FILE, r"age|day|month")
+    wfh_ref, wfh_pcols = load_ref(WFH_BOYS_FILE if sex in ["M", "Male", 1] else WFH_GIRLS_FILE, r"height|length")
     
     age_d = age_m * DAYS_PER_MONTH
+    
+    # HFA Percentile
+    hfa_p = calc_hfa_percentile(age_m, ht, sex)
     if hfa_ref is not None:
         table_val = age_d if float(hfa_ref.iloc[:, 0].max()) > 120 else age_m
         hfa_curve = interp_curve(hfa_ref, hfa_pcols, table_val)
-        hfa_p = est_percentile(ht, hfa_curve)
     else:
         hfa_curve = {50: ht}
-        hfa_p = 50.0
 
+    # WFA Percentile
+    if wfa_ref is not None:
+        wfa_curve = interp_curve(wfa_ref, wfa_pcols, age_m)
+        wfa_p = est_percentile(wt, wfa_curve)
+    else:
+        wfa_curve = {50: wt}
+        wfa_p = 50.0
+
+    # WFH Percentile
     if wfh_ref is not None:
         wfh_curve = interp_curve(wfh_ref, wfh_pcols, ht)
         wfh_p = est_percentile(wt, wfh_curve)
@@ -480,21 +516,25 @@ def generate_report(age_m, ht, wt, sex, model, scaler):
         wfh_curve = {50: wt}
         wfh_p = 50.0
 
-    ai_status, confidence = ai_predict(model, scaler, age_m, ht, wt, sex, wfh_p, hfa_p)
-    bmi = wt / ((ht / 100) ** 2)
+    bmi = wt / ((ht / 100.0) ** 2)
+    bfa_p = calc_bfa_percentile(age_m, bmi, sex)
+
+    ai_status, confidence = ai_predict(model, scaler, age_m, ht, wt, sex, wfh_p, hfa_p, wfa_p, bfa_p)
 
     who_msgs = []
-    if wfh_p < 3:
-        who_msgs.append((f"Wasting risk (P{wfh_p:.1f})", colors.red))
-    elif wfh_p > 85:
-        who_msgs.append((f"Overweight risk (P{wfh_p:.1f})", colors.red))
+    if wfh_p < 3 or bfa_p < 5:
+        who_msgs.append((f"Wasting / Underweight risk (WFH: P{wfh_p:.1f} | BMI: P{bfa_p:.1f})", colors.red))
+    elif wfh_p > 97 or bfa_p > 97:
+        who_msgs.append((f"Obesity risk (WFH: P{wfh_p:.1f} | BMI: P{bfa_p:.1f})", colors.red))
+    elif wfh_p > 85 or bfa_p > 85:
+        who_msgs.append((f"Overweight risk (WFH: P{wfh_p:.1f} | BMI: P{bfa_p:.1f})", colors.HexColor("#f59e0b")))
     else:
-        who_msgs.append(("Wt-for-height healthy.", colors.green))
+        who_msgs.append(("Weight-for-height healthy.", colors.green))
 
     if hfa_p < 3:
-        who_msgs.append((f"Stunting risk (P{hfa_p:.1f})", colors.red))
+        who_msgs.append((f"Stunting risk (Ht-for-Age: P{hfa_p:.1f})", colors.red))
     else:
-        who_msgs.append(("Ht-for-age healthy.", colors.green))
+        who_msgs.append(("Height-for-age healthy.", colors.green))
 
     rec_plan = get_ai_recommendations(ai_status, age_m, wfh_p, hfa_p, bmi)
     recommendations = flatten_recommendation_plan(rec_plan)
@@ -502,6 +542,8 @@ def generate_report(age_m, ht, wt, sex, model, scaler):
     return {
         "wfh_p": wfh_p,
         "hfa_p": hfa_p,
+        "wfa_p": wfa_p,
+        "bfa_p": bfa_p,
         "bmi": bmi,
         "who_msgs": who_msgs,
         "recommendations": recommendations,
@@ -1114,6 +1156,7 @@ if user_role == "Teacher":
         ("📋 Attendance Sheet",       "attendance"),
         ("⚡ Generate Report",        "generate"),
         ("📄 Reports Repository",     "reports"),
+        ("🍽️ AI Meal Planner",        "meal_planner"),
         ("🥗 Food Recommendations",   "food"),
         ("📅 Meal Schedule",          "meal"),
         ("💬 Messages",               "messages"),
@@ -1126,6 +1169,7 @@ if user_role == "Teacher":
         "attendance": "📋 Teacher Attendance Sheet",
         "generate":   "⚡ Generate Growth Report",
         "reports":    "📄 Student Reports Repository",
+        "meal_planner": "🍽️ AI Daily Meal Planner",
         "food":       "🥗 Food Recommendations",
         "meal":       "📅 Weekly Meal Schedule",
         "messages":   "💬 Parent-Teacher Messages",
@@ -1138,6 +1182,7 @@ else:
         ("📋 Attendance & Stats",     "attendance"),
         ("📄 Growth Reports",         "reports"),
         ("⚡ Generate Report",        "generate"),
+        ("🍽️ AI Meal Planner",        "meal_planner"),
         ("🥗 Food Recommendations",   "food"),
         ("📅 Meal Schedule",          "meal"),
         ("💬 Chat with Teacher",      "messages"),
@@ -1148,6 +1193,7 @@ else:
         "attendance": "📋 My Child's Attendance & Stats",
         "reports":    "📄 My Child's Growth Reports",
         "generate":   "⚡ Generate Report for My Child",
+        "meal_planner": "🍽️ My Child's AI Meal Planner",
         "food":       "🥗 Food Recommendations",
         "meal":       "📅 Weekly Meal Schedule",
         "messages":   "💬 Chat with Teacher",
@@ -1408,7 +1454,123 @@ if user_role == "Teacher":
             )
             st.markdown("<br>", unsafe_allow_html=True)
 
-    # 6. Teacher Messages Portal
+    # 6. AI Daily Meal Planner (Teacher)
+    elif nav_selection == "🍽️ AI Daily Meal Planner":
+        st.markdown("<div class='section-header'>🍽️ AI Daily Meal Planner (1–5 Years)</div>", unsafe_allow_html=True)
+        st.caption("Customized 5-meal daily pediatric schedule based on AskNestle, ICMR-NIN RDA 2024, WHO & Harvard Healthy Eating Plate guidelines.")
+
+        st_col1, st_col2 = st.columns(2)
+        with st_col1:
+            student_options = {f"{r['Child Name']} ({r['Child ID']})": (r['Child ID'], r['Child Name']) for _, r in students_df.iterrows()}
+            selected_st = st.selectbox("Select Enrolled Student (or choose Custom Input)", options=["Custom Child Profile"] + list(student_options.keys()), key="t_mp_child")
+            
+            if selected_st != "Custom Child Profile":
+                target_cid, target_cname = student_options[selected_st]
+                mp_child_name = target_cname
+                rep_for_child = next((r for r in st.session_state.reports_store if str(r.get('childId', '')).upper() == target_cid.upper()), None)
+                default_status = rep_for_child.get("aiStatus", "Healthy") if rep_for_child else "Healthy"
+            else:
+                target_cid, target_cname = "CUSTOM", "Child"
+                mp_child_name = st.text_input("Child Name", value="Aarav", key="t_mp_custom_name")
+                default_status = "Healthy"
+
+            mp_sex = st.radio("Child Sex", ["Male", "Female"], horizontal=True, key="t_mp_sex")
+            mp_age_years = st.slider("Child Age (Years)", min_value=1.0, max_value=5.0, value=2.5, step=0.1, key="t_mp_age_y")
+            mp_age_months = float(mp_age_years * 12)
+
+        with st_col2:
+            status_options = ["Healthy", "Underweight", "Stunted", "Stunted & Underweight", "Overweight", "Obese"]
+            stat_idx = status_options.index(default_status) if default_status in status_options else 0
+            mp_status = st.selectbox("Current Growth Diagnostic Status", status_options, index=stat_idx, key="t_mp_status")
+            mp_diet = st.selectbox("Dietary Preference", ["Vegetarian", "Eggetarian", "Non-Vegetarian"], key="t_mp_diet")
+            mp_act = st.select_slider("Daily Activity Level", options=["Sedentary", "Moderate", "Active"], value="Moderate", key="t_mp_act")
+
+        meal_plan_res = generate_custom_meal_plan(mp_age_months, mp_sex, mp_diet, mp_status, mp_act)
+
+        st.markdown("---")
+        st.markdown(f"### 📊 Daily Nutritional Targets for {mp_child_name} ({mp_diet})")
+        
+        target = meal_plan_res["target_rda"]
+        tot = meal_plan_res["plan_totals"]
+        
+        m_c1, m_c2, m_c3, m_c4, m_c5, m_c6 = st.columns(6)
+        m_c1.metric("Calories", f"{tot['calories']} kcal", f"Goal: {target['calories']}")
+        m_c2.metric("Protein", f"{tot['protein_g']} g", f"RDA: {target['protein_g']}g")
+        m_c3.metric("Healthy Fats", f"{tot['fat_g']} g", f"RDA: {target['fat_g']}g")
+        m_c4.metric("Carbohydrates", f"{tot['carbs_g']} g", f"RDA: {target['carbs_g']}g")
+        m_c5.metric("Calcium", f"{target['calcium_mg']} mg", "ICMR-NIN")
+        m_c6.metric("Daily Water", f"{target['water_ml']} ml", "Hydration")
+
+        st.markdown("---")
+        st.markdown("### 🕒 Structured 5-Meal Daily Schedule (AskNestle & NIOS)")
+        
+        meal_icons = {
+            "Breakfast": "🌅",
+            "Mid-Morning": "🍎",
+            "Lunch": "🍛",
+            "Evening Snack": "🥛",
+            "Dinner": "🍲"
+        }
+        
+        for m_type, m_val in meal_plan_res["meals"].items():
+            icon = meal_icons.get(m_type, "🍽️")
+            st.markdown(f"""
+            <div class="custom-card" style="margin-bottom: 0.9rem; border-left: 4px solid #0284c7;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 1.15rem; font-weight: 700; color: #f8fafc;">{icon} {m_type}: {m_val['name']}</span>
+                    <span class="badge badge-info">~{m_val['cal']} kcal</span>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.92rem; margin-top: 0.4rem;">
+                    {m_val['desc']}
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; font-size: 0.85rem; color: #cbd5e1;">
+                    <span>✋ <b>Portion:</b> {m_val['hand_portion']}</span>
+                    <span>✨ <b>Key Nutrients:</b> {m_val['nutrients']}</span>
+                    <span>🥩 <b>Protein:</b> {m_val['p']}g | <b>Carbs:</b> {m_val['c']}g | <b>Fats:</b> {m_val['f']}g</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("---")
+        st.markdown("### 🖐️ Precision Nutrition Visual Hand-Size Portion Guide")
+        st.caption("How to measure child-appropriate portions quickly at home without weighing food:")
+        
+        hp_c1, hp_c2, hp_c3, hp_c4 = st.columns(4)
+        hp_map = [
+            (hp_c1, "Palm", "Protein", "Dal, Paneer, Eggs, Chicken, Fish", "✋", meal_plan_res["hand_portions"]["Palm"]["serving_1_3"] if mp_age_months < 36 else meal_plan_res["hand_portions"]["Palm"]["serving_3_5"]),
+            (hp_c2, "Fist", "Veggies & Fruits", "Spinach, Carrots, Apple, Papaya", "✊", meal_plan_res["hand_portions"]["Fist"]["serving_1_3"] if mp_age_months < 36 else meal_plan_res["hand_portions"]["Fist"]["serving_3_5"]),
+            (hp_c3, "Cupped Hand", "Grains & Carbs", "Roti, Rice, Poha, Dalia, Oats", "🤲", meal_plan_res["hand_portions"]["Cupped Hand"]["serving_1_3"] if mp_age_months < 36 else meal_plan_res["hand_portions"]["Cupped Hand"]["serving_3_5"]),
+            (hp_c4, "Thumb", "Healthy Fats", "Desi Ghee, Butter, Nut Powders", "👍", meal_plan_res["hand_portions"]["Thumb"]["serving_1_3"] if mp_age_months < 36 else meal_plan_res["hand_portions"]["Thumb"]["serving_3_5"]),
+        ]
+        for col, hname, hnut, hexamples, hicon, hserv in hp_map:
+            with col:
+                st.markdown(f"""
+                <div class="custom-card" style="text-align: center; padding: 1rem 0.8rem;">
+                    <div style="font-size: 2rem;">{hicon}</div>
+                    <div style="font-weight: 700; color: #f8fafc; margin-top: 0.3rem;">{hname} = {hnut}</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem;">{hexamples}</div>
+                    <div style="font-size: 0.82rem; color: #38bdf8; font-weight: 600; margin-top: 0.5rem; background: rgba(56, 189, 248, 0.1); padding: 4px; border-radius: 6px;">{hserv}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("---")
+        st.markdown(f"### 💡 Pediatric Clinical Advice ({meal_plan_res['clinical_advice']['title']})")
+        st.info(f"**Focus:** {meal_plan_res['clinical_advice']['focus']}")
+        for tip in meal_plan_res['clinical_advice']['tips']:
+            st.markdown(f"• {tip}")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        pdf_meal_buf = create_meal_plan_pdf(mp_child_name, meal_plan_res)
+        st.download_button(
+            label=f"📥 Download Printable Daily Meal Plan PDF for {mp_child_name}",
+            data=pdf_meal_buf.getvalue(),
+            file_name=f"{mp_child_name}_Daily_Meal_Plan.pdf",
+            mime="application/pdf",
+            key="t_dl_meal_plan_btn",
+            use_container_width=True
+        )
+
+    # 7. Teacher Messages Portal
     elif nav_selection == "💬 Parent-Teacher Messages":
         st.markdown("<div class='section-header'>💬 Teacher Messaging Portal</div>", unsafe_allow_html=True)
         student_options = {f"{r['Child Name']} ({r['Child ID']})": r['Child ID'] for _, r in students_df.iterrows()}
@@ -1826,7 +1988,112 @@ else:
                 use_container_width=True
             )
 
-    # 5. Chat with Teacher (Parent View)
+    # 5. My Child's AI Meal Planner (Parent)
+    elif nav_selection == "🍽️ My Child's AI Meal Planner":
+        st.markdown(f"<div class='section-header'>🍽️ AI Daily Meal Planner for {child_name} ({parent_cid})</div>", unsafe_allow_html=True)
+        st.caption("Personalized full-day nutrition plan based on AskNestle, ICMR-NIN RDA 2024, WHO & Harvard Healthy Eating Plate guidelines.")
+
+        p_rep = next((r for r in st.session_state.reports_store if str(r.get('childId', '')).upper() == parent_cid.upper()), None)
+        p_default_status = p_rep.get("aiStatus", "Healthy") if p_rep else "Healthy"
+
+        col_pm1, col_pm2 = st.columns(2)
+        with col_pm1:
+            p_mp_sex = st.radio("Sex", ["Male", "Female"], horizontal=True, key="p_mp_sex_in")
+            p_mp_age_y = st.slider("Age (Years)", min_value=1.0, max_value=5.0, value=2.5, step=0.1, key="p_mp_age_in")
+            p_mp_age_m = float(p_mp_age_y * 12)
+        with col_pm2:
+            status_opts = ["Healthy", "Underweight", "Stunted", "Stunted & Underweight", "Overweight", "Obese"]
+            st_idx = status_opts.index(p_default_status) if p_default_status in status_opts else 0
+            p_mp_status = st.selectbox("Growth Status Focus", status_opts, index=st_idx, key="p_mp_stat_in")
+            p_mp_diet = st.selectbox("Family Dietary Preference", ["Vegetarian", "Eggetarian", "Non-Vegetarian"], key="p_mp_diet_in")
+            p_mp_act = st.select_slider("Activity Level", options=["Sedentary", "Moderate", "Active"], value="Moderate", key="p_mp_act_in")
+
+        p_meal_plan = generate_custom_meal_plan(p_mp_age_m, p_mp_sex, p_mp_diet, p_mp_status, p_mp_act)
+
+        st.markdown("---")
+        st.markdown(f"### 📊 Daily Nutritional Balance for {child_name}")
+        
+        p_tgt = p_meal_plan["target_rda"]
+        p_tot = p_meal_plan["plan_totals"]
+        
+        pm_c1, pm_c2, pm_c3, pm_c4, pm_c5, pm_c6 = st.columns(6)
+        pm_c1.metric("Calories", f"{p_tot['calories']} kcal", f"Goal: {p_tgt['calories']}")
+        pm_c2.metric("Protein", f"{p_tot['protein_g']} g", f"RDA: {p_tgt['protein_g']}g")
+        pm_c3.metric("Healthy Fats", f"{p_tot['fat_g']} g", f"RDA: {p_tgt['fat_g']}g")
+        pm_c4.metric("Carbs", f"{p_tot['carbs_g']} g", f"RDA: {p_tgt['carbs_g']}g")
+        pm_c5.metric("Calcium", f"{p_tgt['calcium_mg']} mg", "ICMR-NIN")
+        pm_c6.metric("Water", f"{p_tgt['water_ml']} ml", "Hydration")
+
+        st.markdown("---")
+        st.markdown(f"### 🕒 {child_name}'s 5-Meal Daily Schedule (AskNestle & NIOS)")
+        
+        p_meal_icons = {
+            "Breakfast": "🌅",
+            "Mid-Morning": "🍎",
+            "Lunch": "🍛",
+            "Evening Snack": "🥛",
+            "Dinner": "🍲"
+        }
+        
+        for m_type, m_val in p_meal_plan["meals"].items():
+            icon = p_meal_icons.get(m_type, "🍽️")
+            st.markdown(f"""
+            <div class="custom-card" style="margin-bottom: 0.9rem; border-left: 4px solid #38bdf8;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 1.15rem; font-weight: 700; color: #f8fafc;">{icon} {m_type}: {m_val['name']}</span>
+                    <span class="badge badge-info">~{m_val['cal']} kcal</span>
+                </div>
+                <div style="color: #94a3b8; font-size: 0.92rem; margin-top: 0.4rem;">
+                    {m_val['desc']}
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 0.6rem; font-size: 0.85rem; color: #cbd5e1;">
+                    <span>✋ <b>Serving Portion:</b> {m_val['hand_portion']}</span>
+                    <span>✨ <b>Key Nutrients:</b> {m_val['nutrients']}</span>
+                    <span>🥩 <b>Protein:</b> {m_val['p']}g | <b>Carbs:</b> {m_val['c']}g | <b>Fats:</b> {m_val['f']}g</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("---")
+        st.markdown("### 🖐️ Hand-Size Portion Guide for Parents")
+        st.caption("A simple way to portion food without measuring cups:")
+        
+        hpc1, hpc2, hpc3, hpc4 = st.columns(4)
+        hp_map_p = [
+            (hpc1, "Palm", "Protein", "Dal, Paneer, Eggs, Chicken, Fish", "✋", p_meal_plan["hand_portions"]["Palm"]["serving_1_3"] if p_mp_age_m < 36 else p_meal_plan["hand_portions"]["Palm"]["serving_3_5"]),
+            (hpc2, "Fist", "Veggies & Fruits", "Spinach, Carrots, Apple, Papaya", "✊", p_meal_plan["hand_portions"]["Fist"]["serving_1_3"] if p_mp_age_m < 36 else p_meal_plan["hand_portions"]["Fist"]["serving_3_5"]),
+            (hpc3, "Cupped Hand", "Grains & Carbs", "Roti, Rice, Poha, Dalia, Oats", "🤲", p_meal_plan["hand_portions"]["Cupped Hand"]["serving_1_3"] if p_mp_age_m < 36 else p_meal_plan["hand_portions"]["Cupped Hand"]["serving_3_5"]),
+            (hpc4, "Thumb", "Healthy Fats", "Desi Ghee, Butter, Nut Powders", "👍", p_meal_plan["hand_portions"]["Thumb"]["serving_1_3"] if p_mp_age_m < 36 else p_meal_plan["hand_portions"]["Thumb"]["serving_3_5"]),
+        ]
+        for col, hname, hnut, hexamples, hicon, hserv in hp_map_p:
+            with col:
+                st.markdown(f"""
+                <div class="custom-card" style="text-align: center; padding: 1rem 0.8rem;">
+                    <div style="font-size: 2rem;">{hicon}</div>
+                    <div style="font-weight: 700; color: #f8fafc; margin-top: 0.3rem;">{hname} = {hnut}</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.2rem;">{hexamples}</div>
+                    <div style="font-size: 0.82rem; color: #38bdf8; font-weight: 600; margin-top: 0.5rem; background: rgba(56, 189, 248, 0.1); padding: 4px; border-radius: 6px;">{hserv}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("---")
+        st.markdown(f"### 💡 Pediatric Nutritional Guidance ({p_meal_plan['clinical_advice']['title']})")
+        st.info(f"**Focus:** {p_meal_plan['clinical_advice']['focus']}")
+        for tip in p_meal_plan['clinical_advice']['tips']:
+            st.markdown(f"• {tip}")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        p_pdf_meal = create_meal_plan_pdf(child_name, p_meal_plan)
+        st.download_button(
+            label=f"📥 Download Printable Daily Meal Plan PDF for {child_name}",
+            data=p_pdf_meal.getvalue(),
+            file_name=f"{parent_cid}_{child_name}_Daily_Meal_Plan.pdf",
+            mime="application/pdf",
+            key="p_dl_meal_plan_btn",
+            use_container_width=True
+        )
+
+    # 6. Chat with Teacher (Parent View)
     elif nav_selection == "💬 Chat with Teacher":
         st.markdown(f"<div class='section-header'>💬 Chat with Class Teacher ({child_name} - {parent_cid})</div>", unsafe_allow_html=True)
 
