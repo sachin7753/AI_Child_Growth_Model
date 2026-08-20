@@ -117,32 +117,28 @@ except Exception:
 if not os.path.exists(TEMP_REPORTS_DIR):
     os.makedirs(TEMP_REPORTS_DIR, exist_ok=True)
 
-# ------------------- THEME STATE & DYNAMIC CSS STYLING -------------------
-if "app_theme" not in st.session_state:
-    st.session_state.app_theme = "dark"
-
-def get_theme_css(theme: str) -> str:
-    if theme == "light":
-        return """
+# ------------------- SPICED MOCHA DESIGN SYSTEM & CSS STYLING -------------------
+def get_theme_css() -> str:
+    return """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     
     html, body, [class*="css"], .stApp {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        background: linear-gradient(180deg, #fcfaf4 0%, #f4eee2 100%) !important;
-        color: #38240D !important;
+        background: radial-gradient(circle at 50% 0%, #2e180b 0%, #150b04 100%) !important;
+        color: #F5F5DC !important;
     }
 
-    /* ---- Top Header & Decoration Bar (Light) ---- */
+    /* ---- Top Header & Decoration Bar (Spiced Mocha) ---- */
     header[data-testid="stHeader"],
     .stAppHeader,
     div[data-testid="stDecoration"],
     div[data-testid="stToolbar"],
     div[data-testid="stStatusWidget"] {
-        background: #fcfaf4 !important;
-        background-color: #fcfaf4 !important;
-        color: #38240D !important;
-        border-bottom: 1px solid rgba(192, 88, 0, 0.15) !important;
+        background: #150b04 !important;
+        background-color: #150b04 !important;
+        color: #F5F5DC !important;
+        border-bottom: 1px solid rgba(212, 126, 48, 0.25) !important;
     }
 
     .main .block-container {
@@ -151,645 +147,101 @@ def get_theme_css(theme: str) -> str:
         max-width: 1200px;
     }
 
-    /* ---- Universal Text & Headings (Light) ---- */
+    /* ---- Universal Text & Headings ---- */
     h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
-        color: #38240D !important;
+        color: #F5F5DC !important;
         font-weight: 800 !important;
     }
     .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown div {
-        color: #38240D !important;
+        color: #F5F5DC !important;
     }
 
-    /* ---- Form & Input Labels (Light) ---- */
+    /* ---- Form & Input Labels ---- */
     label, [data-testid="stWidgetLabel"] label, [data-testid="stWidgetLabel"] p, [data-testid="stWidgetLabel"] span {
-        color: #38240D !important;
+        color: #F5F5DC !important;
         font-weight: 700 !important;
         font-size: 0.95rem !important;
     }
 
-    /* ---- Streamlit Metrics (Light) ---- */
+    /* ---- Streamlit Metrics ---- */
     [data-testid="stMetricValue"], [data-testid="stMetricValue"] * {
-        color: #C05800 !important;
+        color: #D47E30 !important;
         font-size: 2rem !important;
         font-weight: 800 !important;
-        text-shadow: none !important;
+        text-shadow: 0 0 14px rgba(212, 126, 48, 0.35) !important;
     }
     [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] * {
-        color: #713600 !important;
+        color: #F5F5DC !important;
         font-weight: 700 !important;
         font-size: 0.88rem !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
+        letter-spacing: 0.06em !important;
     }
 
-    /* ---- Streamlit Tabs (Light) ---- */
+    /* ---- Streamlit Tabs ---- */
     [data-testid="stTabs"] button[role="tab"] {
-        color: #713600 !important;
+        color: #d6cab3 !important;
         font-weight: 600 !important;
         font-size: 0.95rem !important;
     }
     [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        color: #C05800 !important;
-        border-bottom: 3px solid #C05800 !important;
+        color: #D47E30 !important;
+        border-bottom: 3px solid #D47E30 !important;
         font-weight: 800 !important;
     }
     [data-testid="stTabs"] button[role="tab"] p {
         color: inherit !important;
     }
 
-    /* ---- Form Inputs & Selectboxes (Light) ---- */
+    /* ---- Form Inputs & Selectboxes ---- */
     input, textarea {
-        background-color: #ffffff !important;
-        color: #38240D !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        background-color: #241207 !important;
+        color: #F5F5DC !important;
+        border: 1.5px solid rgba(212, 126, 48, 0.4) !important;
         border-radius: 8px !important;
         font-weight: 600 !important;
     }
     div[data-baseweb="input"] {
-        background-color: #ffffff !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        background-color: #241207 !important;
+        border: 1.5px solid rgba(212, 126, 48, 0.4) !important;
         border-radius: 8px !important;
     }
     div[data-baseweb="input"] input {
-        color: #38240D !important;
-        background-color: #ffffff !important;
+        color: #F5F5DC !important;
+        background-color: #241207 !important;
         font-weight: 600 !important;
     }
     div[data-baseweb="select"] > div {
-        background-color: #ffffff !important;
-        color: #38240D !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        background-color: #241207 !important;
+        color: #F5F5DC !important;
+        border: 1.5px solid rgba(212, 126, 48, 0.4) !important;
         border-radius: 8px !important;
         font-weight: 600 !important;
     }
     div[data-baseweb="select"] span {
-        color: #38240D !important;
+        color: #F5F5DC !important;
     }
     div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li {
-        background-color: #ffffff !important;
-        color: #38240D !important;
+        background-color: #241207 !important;
+        color: #F5F5DC !important;
     }
     div[role="radiogroup"] label, div[data-testid="stCheckbox"] label {
-        color: #38240D !important;
+        color: #F5F5DC !important;
         font-weight: 600 !important;
     }
     div[role="radiogroup"] label p, div[data-testid="stCheckbox"] label p {
-        color: #38240D !important;
+        color: #F5F5DC !important;
         font-weight: 600 !important;
     }
 
-    /* ---- Datepicker & Calendar (Light Mode: High Contrast) ---- */
+    /* ---- Datepicker & Calendar (Spiced Mocha) ---- */
     div[data-testid="stDateInput"] input,
     div[data-testid="stDateInput"] div[data-baseweb="input"],
     div[data-testid="stDateInput"] div[data-baseweb="base-input"] {
-        background-color: #ffffff !important;
-        color: #38240D !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-    }
-    div[data-baseweb="popover"],
-    div[data-baseweb="popover"] > div,
-    div[data-baseweb="calendar"],
-    div[data-baseweb="calendar"] > div,
-    div[role="dialog"][data-baseweb="calendar"],
-    div[role="dialog"] {
-        background-color: #ffffff !important;
-        background: #ffffff !important;
-        color: #38240D !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        border-radius: 12px !important;
-        box-shadow: 0 12px 32px rgba(113, 54, 0, 0.18) !important;
-    }
-    div[data-baseweb="calendar"] header,
-    div[data-baseweb="calendar"] header *,
-    div[data-baseweb="calendar"] header button,
-    div[data-baseweb="calendar"] header select,
-    div[data-baseweb="calendar"] select {
-        background-color: transparent !important;
-        background: transparent !important;
-        color: #38240D !important;
-        fill: #38240D !important;
-    }
-    div[data-baseweb="calendar"] [role="columnheader"],
-    div[data-baseweb="calendar"] [role="columnheader"] * {
-        color: #C05800 !important;
-        font-weight: 800 !important;
-    }
-    div[data-baseweb="calendar"] [role="gridcell"],
-    div[data-baseweb="calendar"] [role="gridcell"] *,
-    div[data-baseweb="calendar"] [aria-roledescription="button"],
-    div[data-baseweb="calendar"] [aria-roledescription="button"] * {
-        color: #38240D !important;
-        background-color: transparent !important;
-        font-weight: 600 !important;
-    }
-    div[data-baseweb="calendar"] [aria-disabled="true"],
-    div[data-baseweb="calendar"] [aria-disabled="true"] * {
-        color: rgba(56, 36, 13, 0.3) !important;
-    }
-    div[data-baseweb="calendar"] [aria-selected="true"],
-    div[data-baseweb="calendar"] [aria-selected="true"] * {
-        background-color: #C05800 !important;
-        background: #C05800 !important;
-        color: #ffffff !important;
-        border-radius: 50% !important;
-        font-weight: 800 !important;
-    }
-    div[data-baseweb="calendar"] [role="gridcell"]:hover > div,
-    div[data-baseweb="calendar"] [aria-roledescription="button"]:hover {
-        background-color: rgba(192, 88, 0, 0.15) !important;
-        color: #C05800 !important;
-        border-radius: 50% !important;
-    }
-
-    /* ---- Hero Banner (Light) ---- */
-    .hero-banner {
-        background: linear-gradient(135deg, #713600 0%, #a34b00 50%, #C05800 100%) !important;
-        color: #FDFBD4 !important;
-        padding: 2.2rem 2rem;
-        border-radius: 18px;
-        box-shadow: 0 15px 28px -5px rgba(113, 54, 0, 0.25);
-        margin-bottom: 1.8rem;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(253, 251, 212, 0.35);
-    }
-    .hero-banner::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 300px;
-        height: 300px;
-        background: rgba(253, 251, 212, 0.12);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-    .hero-title {
-        font-size: 2.2rem;
-        font-weight: 800;
-        margin-bottom: 0.5rem;
-        color: #FDFBD4 !important;
-        letter-spacing: -0.02em;
-    }
-    .hero-subtitle {
-        font-size: 1.05rem;
-        color: #fef8dd !important;
-        max-width: 750px;
-        line-height: 1.6;
-        margin-bottom: 1.2rem;
-    }
-
-    /* ---- Metric Cards (Light) ---- */
-    .metric-card {
-        background: #ffffff !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.22) !important;
-        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.08) !important;
-        border-radius: 14px;
-        padding: 1.2rem 1.5rem;
-        text-align: center;
-        transition: transform 0.2s ease, border-color 0.2s ease;
-    }
-    .metric-card:hover {
-        transform: translateY(-3px);
-        border-color: #C05800 !important;
-        box-shadow: 0 8px 20px rgba(113, 54, 0, 0.15) !important;
-    }
-    .metric-val {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #C05800 !important;
-    }
-    .metric-lbl {
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #713600 !important;
-        font-weight: 700;
-    }
-
-    /* ---- Custom Cards (Light) ---- */
-    .custom-card {
-        background: #ffffff !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.22) !important;
-        border-radius: 16px;
-        padding: 1.4rem;
-        margin-bottom: 1.2rem;
-        box-shadow: 0 4px 16px rgba(113, 54, 0, 0.08) !important;
-        color: #38240D !important;
-    }
-    .custom-card:hover {
-        border-color: #C05800 !important;
-    }
-    .custom-card p, .custom-card strong, .custom-card b {
-        color: #38240D !important;
-    }
-    .card-heading {
-        color: #38240D !important;
-        font-weight: 700;
-    }
-    .card-subtext {
-        color: #613b16 !important;
-    }
-    .card-meta, .card-meta span {
-        color: #713600 !important;
-    }
-    .card-title {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #38240D !important;
-        margin-bottom: 0.8rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* ---- Chat Bubbles (Light) ---- */
-    .chat-bubble-teacher {
-        background: #fdf6ec !important;
-        border: 1px solid #713600 !important;
-        border-radius: 14px;
-        padding: 1rem;
-        margin-bottom: 0.8rem;
-        color: #38240D !important;
-    }
-    .chat-bubble-parent {
-        background: #fef9f0 !important;
-        border: 1px solid #C05800 !important;
-        border-radius: 14px;
-        padding: 1rem;
-        margin-bottom: 0.8rem;
-        color: #38240D !important;
-    }
-
-    /* ---- Badges (Light) ---- */
-    .badge {
-        display: inline-block !important;
-        padding: 0.35rem 0.75rem !important;
-        border-radius: 9999px !important;
-        font-size: 0.8rem !important;
-        font-weight: 800 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-    }
-    .badge-info, .custom-card .badge-info {
-        background-color: #38240D !important;
-        color: #FDFBD4 !important;
-    }
-    .badge-info *, .custom-card .badge-info * {
-        color: #FDFBD4 !important;
-    }
-    .badge-healthy, .custom-card .badge-healthy {
-        background-color: #e6f4ea !important;
-        color: #137333 !important;
-        border: 1px solid #34a853 !important;
-    }
-    .badge-healthy *, .custom-card .badge-healthy * {
-        color: #137333 !important;
-    }
-    .badge-underweight, .custom-card .badge-underweight {
-        background-color: #fef7e0 !important;
-        color: #b06000 !important;
-        border: 1px solid #f9ab00 !important;
-    }
-    .badge-underweight *, .custom-card .badge-underweight * {
-        color: #b06000 !important;
-    }
-    .badge-overweight, .custom-card .badge-overweight {
-        background-color: #fef0e6 !important;
-        color: #c05800 !important;
-        border: 1px solid #c05800 !important;
-    }
-    .badge-overweight *, .custom-card .badge-overweight * {
-        color: #c05800 !important;
-    }
-    .badge-obese, .custom-card .badge-obese {
-        background-color: #fce8e6 !important;
-        color: #c5221f !important;
-        border: 1px solid #ea4335 !important;
-    }
-    .badge-obese *, .custom-card .badge-obese * {
-        color: #c5221f !important;
-    }
-    .badge-stunted, .custom-card .badge-stunted {
-        background-color: #f3e8fd !important;
-        color: #7627bb !important;
-        border: 1px solid #9333ea !important;
-    }
-    .badge-stunted *, .custom-card .badge-stunted * {
-        color: #7627bb !important;
-    }
-
-    .section-header {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #38240D !important;
-        margin-top: 1rem;
-        margin-bottom: 1.2rem;
-        border-left: 5px solid #C05800;
-        padding-left: 0.85rem;
-    }
-
-    .stDataFrame {
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(192, 88, 0, 0.2);
-        background: #ffffff !important;
-    }
-
-    /* ---- Buttons (Light) ---- */
-    button,
-    [data-testid*="stBaseButton"],
-    div.stButton > button,
-    div[data-testid="stFormSubmitButton"] > button,
-    [data-testid="stDownloadButton"] > button {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 700 !important;
-        border-radius: 10px !important;
-        transition: all 0.2s cubic-bezier(.4,0,.2,1) !important;
-    }
-
-    /* Secondary Buttons (Light) */
-    button[kind="secondary"],
-    button[kind="secondaryFormSubmit"],
-    [data-testid="stBaseButton-secondary"],
-    [data-testid="stBaseButton-secondaryFormSubmit"],
-    div.stButton > button:not([kind="primary"]) {
-        background-color: #ffffff !important;
-        background: #ffffff !important;
-        color: #38240D !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        box-shadow: 0 2px 6px rgba(113, 54, 0, 0.06) !important;
-    }
-    button[kind="secondary"] *,
-    button[kind="secondaryFormSubmit"] *,
-    [data-testid="stBaseButton-secondary"] *,
-    [data-testid="stBaseButton-secondaryFormSubmit"] *,
-    div.stButton > button:not([kind="primary"]) * {
-        color: #38240D !important;
-    }
-    button[kind="secondary"]:hover,
-    button[kind="secondaryFormSubmit"]:hover,
-    [data-testid="stBaseButton-secondary"]:hover,
-    [data-testid="stBaseButton-secondaryFormSubmit"]:hover {
-        background-color: rgba(192, 88, 0, 0.1) !important;
-        border-color: #C05800 !important;
-        color: #C05800 !important;
-    }
-    button[kind="secondary"]:hover *,
-    button[kind="secondaryFormSubmit"]:hover * {
-        color: #C05800 !important;
-    }
-
-    /* Primary & Form Submit & Download Buttons (Light) */
-    button[kind="primary"],
-    button[kind="primaryFormSubmit"],
-    [data-testid="stBaseButton-primary"],
-    [data-testid="stBaseButton-primaryFormSubmit"],
-    div[data-testid="stFormSubmitButton"] > button,
-    [data-testid="stDownloadButton"] > button {
-        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
-        background-color: #C05800 !important;
-        color: #FDFBD4 !important;
-        border: 1px solid #713600 !important;
-        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.25) !important;
-        font-weight: 700 !important;
-    }
-    button[kind="primary"] *,
-    button[kind="primaryFormSubmit"] *,
-    [data-testid="stBaseButton-primary"] *,
-    [data-testid="stBaseButton-primaryFormSubmit"] *,
-    div[data-testid="stFormSubmitButton"] > button *,
-    [data-testid="stDownloadButton"] > button * {
-        color: #FDFBD4 !important;
-        font-weight: 700 !important;
-    }
-    button[kind="primary"]:hover,
-    button[kind="primaryFormSubmit"]:hover,
-    [data-testid="stBaseButton-primary"]:hover,
-    [data-testid="stBaseButton-primaryFormSubmit"]:hover,
-    div[data-testid="stFormSubmitButton"] > button:hover,
-    [data-testid="stDownloadButton"] > button:hover {
-        background: linear-gradient(135deg, #8a4200 0%, #d96502 100%) !important;
-        box-shadow: 0 6px 20px rgba(113, 54, 0, 0.35) !important;
-        transform: translateY(-1px);
-    }
-
-    /* ---- Sidebar Navigation Alignment (Light) ---- */
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #fdfbf7 0%, #f6eee0 100%) !important;
-        border-right: 1px solid rgba(192, 88, 0, 0.2) !important;
-    }
-    section[data-testid="stSidebar"] div.stButton > button {
-        width: 100% !important;
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        text-align: left !important;
-        padding: 0.62rem 0.95rem !important;
-        border-radius: 10px !important;
-        border: 1px solid transparent !important;
-        background: transparent !important;
-        color: #38240D !important;
-        font-size: 0.92rem !important;
-        font-weight: 600 !important;
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-        transition: all 0.2s cubic-bezier(.4,0,.2,1) !important;
-        margin: 2px 0 !important;
-        min-height: 42px !important;
-        box-sizing: border-box !important;
-    }
-    section[data-testid="stSidebar"] div.stButton > button p,
-    section[data-testid="stSidebar"] div.stButton > button div {
-        text-align: left !important;
-        width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        font-size: 0.92rem !important;
-        color: #38240D !important;
-    }
-    section[data-testid="stSidebar"] div.stButton > button:hover {
-        background: rgba(192, 88, 0, 0.12) !important;
-        border-color: rgba(192, 88, 0, 0.3) !important;
-        color: #713600 !important;
-        transform: translateX(3px) !important;
-    }
-    /* Active Nav Button */
-    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
-        border: 1px solid #713600 !important;
-        color: #FDFBD4 !important;
-        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.25) !important;
-        font-weight: 700 !important;
-    }
-    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] p,
-    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] div {
-        color: #FDFBD4 !important;
-        font-weight: 700 !important;
-    }
-    .sidebar-nav-label {
-        font-size: 0.72rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: #713600 !important;
-        padding: 0.6rem 0.4rem 0.35rem;
-    }
-
-    .logout-btn > button {
-        background: rgba(239, 68, 68, 0.1) !important;
-        border: 1px solid rgba(239, 68, 68, 0.3) !important;
-        color: #dc2626 !important;
-    }
-    .logout-btn > button:hover {
-        background: rgba(239, 68, 68, 0.2) !important;
-        border-color: #dc2626 !important;
-        color: #991b1b !important;
-    }
-
-    .att-progress-bg {
-        background: #f0e6d6;
-        border: 1px solid rgba(192, 88, 0, 0.2);
-        border-radius: 9999px;
-        height: 8px;
-        width: 100%;
-        overflow: hidden;
-        margin-top: 6px;
-    }
-    .att-progress-bar {
-        height: 100%;
-        border-radius: 9999px;
-        transition: width 0.4s ease;
-    }
-</style>
-        """
-    else:  # DARK MODE (CHOCOLATE TRUFFLE)
-        return """
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    
-    html, body, [class*="css"], .stApp {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        background: radial-gradient(circle at 50% 0%, #2b1a0d 0%, #170e06 100%) !important;
-        color: #FDFBD4 !important;
-    }
-
-    /* ---- Top Header & Decoration Bar (Dark) ---- */
-    header[data-testid="stHeader"],
-    .stAppHeader,
-    div[data-testid="stDecoration"],
-    div[data-testid="stToolbar"],
-    div[data-testid="stStatusWidget"] {
-        background: #170e06 !important;
-        background-color: #170e06 !important;
-        color: #FDFBD4 !important;
-        border-bottom: 1px solid rgba(192, 88, 0, 0.25) !important;
-    }
-
-    .main .block-container {
-        padding-top: 1.8rem;
-        padding-bottom: 3rem;
-        max-width: 1200px;
-    }
-
-    /* ---- Universal Text & Headings (Dark) ---- */
-    h1, h2, h3, h4, h5, h6, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
-        color: #FDFBD4 !important;
-        font-weight: 800 !important;
-    }
-    .stMarkdown p, .stMarkdown span, .stMarkdown li, .stMarkdown div {
-        color: #FDFBD4 !important;
-    }
-
-    /* ---- Form & Input Labels (Dark) ---- */
-    label, [data-testid="stWidgetLabel"] label, [data-testid="stWidgetLabel"] p, [data-testid="stWidgetLabel"] span {
-        color: #FDFBD4 !important;
-        font-weight: 700 !important;
-        font-size: 0.95rem !important;
-    }
-
-    /* ---- Streamlit Metrics (Dark) ---- */
-    [data-testid="stMetricValue"], [data-testid="stMetricValue"] * {
-        color: #C05800 !important;
-        font-size: 2rem !important;
-        font-weight: 800 !important;
-        text-shadow: 0 0 12px rgba(192, 88, 0, 0.3) !important;
-    }
-    [data-testid="stMetricLabel"], [data-testid="stMetricLabel"] * {
-        color: #e5d8b8 !important;
-        font-weight: 700 !important;
-        font-size: 0.88rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.05em !important;
-    }
-
-    /* ---- Streamlit Tabs (Dark) ---- */
-    [data-testid="stTabs"] button[role="tab"] {
-        color: #e5d8b8 !important;
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
-    }
-    [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        color: #C05800 !important;
-        border-bottom: 3px solid #C05800 !important;
-        font-weight: 800 !important;
-    }
-    [data-testid="stTabs"] button[role="tab"] p {
-        color: inherit !important;
-    }
-
-    /* ---- Form Inputs & Selectboxes (Dark) ---- */
-    input, textarea {
-        background-color: #2b1b0d !important;
-        color: #FDFBD4 !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-    }
-    div[data-baseweb="input"] {
-        background-color: #2b1b0d !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        border-radius: 8px !important;
-    }
-    div[data-baseweb="input"] input {
-        color: #FDFBD4 !important;
-        background-color: #2b1b0d !important;
-        font-weight: 600 !important;
-    }
-    div[data-baseweb="select"] > div {
-        background-color: #2b1b0d !important;
-        color: #FDFBD4 !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-    }
-    div[data-baseweb="select"] span {
-        color: #FDFBD4 !important;
-    }
-    div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li {
-        background-color: #2b1b0d !important;
-        color: #FDFBD4 !important;
-    }
-    div[role="radiogroup"] label, div[data-testid="stCheckbox"] label {
-        color: #FDFBD4 !important;
-        font-weight: 600 !important;
-    }
-    div[role="radiogroup"] label p, div[data-testid="stCheckbox"] label p {
-        color: #FDFBD4 !important;
-        font-weight: 600 !important;
-    }
-
-    /* ---- Datepicker & Calendar (Dark Mode: Comprehensive BaseWeb Override) ---- */
-    div[data-testid="stDateInput"] input,
-    div[data-testid="stDateInput"] div[data-baseweb="input"],
-    div[data-testid="stDateInput"] div[data-baseweb="base-input"] {
-        background-color: #2b1b0d !important;
-        background: #2b1b0d !important;
-        color: #FDFBD4 !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.4) !important;
+        background-color: #241207 !important;
+        background: #241207 !important;
+        color: #F5F5DC !important;
+        border: 1.5px solid rgba(212, 126, 48, 0.45) !important;
         border-radius: 8px !important;
         font-weight: 600 !important;
     }
@@ -802,20 +254,20 @@ def get_theme_css(theme: str) -> str:
     div[data-baseweb="calendar"] [role="row"],
     div[role="dialog"][data-baseweb="calendar"],
     div[role="dialog"] {
-        background-color: #2b1b0d !important;
-        background: #2b1b0d !important;
-        color: #FDFBD4 !important;
-        border-color: #C05800 !important;
+        background-color: #241207 !important;
+        background: #241207 !important;
+        color: #F5F5DC !important;
+        border-color: #D47E30 !important;
     }
     div[data-baseweb="popover"] > div,
     div[data-baseweb="calendar"],
     div[role="dialog"] {
-        border: 1.5px solid #C05800 !important;
+        border: 1.5px solid #D47E30 !important;
         border-radius: 12px !important;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8) !important;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85) !important;
     }
     div[data-baseweb="calendar"] * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
     }
     div[data-baseweb="calendar"] header,
     div[data-baseweb="calendar"] header *,
@@ -824,61 +276,61 @@ def get_theme_css(theme: str) -> str:
     div[data-baseweb="calendar"] select {
         background-color: transparent !important;
         background: transparent !important;
-        color: #FDFBD4 !important;
-        fill: #FDFBD4 !important;
+        color: #F5F5DC !important;
+        fill: #F5F5DC !important;
     }
     div[data-baseweb="calendar"] [role="columnheader"],
     div[data-baseweb="calendar"] [role="columnheader"] * {
-        color: #C05800 !important;
+        color: #D47E30 !important;
         font-weight: 800 !important;
     }
     div[data-baseweb="calendar"] [role="gridcell"],
     div[data-baseweb="calendar"] [role="gridcell"] *,
     div[data-baseweb="calendar"] [aria-roledescription="button"],
     div[data-baseweb="calendar"] [aria-roledescription="button"] * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
         background-color: transparent !important;
         font-weight: 600 !important;
     }
     div[data-baseweb="calendar"] [aria-disabled="true"],
     div[data-baseweb="calendar"] [aria-disabled="true"] * {
-        color: rgba(253, 251, 212, 0.3) !important;
+        color: rgba(245, 245, 220, 0.3) !important;
     }
     div[data-baseweb="calendar"] [aria-selected="true"],
     div[data-baseweb="calendar"] [aria-selected="true"] * {
-        background-color: #C05800 !important;
-        background: #C05800 !important;
+        background-color: #D47E30 !important;
+        background: #D47E30 !important;
         color: #ffffff !important;
         border-radius: 50% !important;
         font-weight: 800 !important;
     }
     div[data-baseweb="calendar"] [role="gridcell"]:hover > div,
     div[data-baseweb="calendar"] [aria-roledescription="button"]:hover {
-        background-color: rgba(192, 88, 0, 0.4) !important;
+        background-color: rgba(212, 126, 48, 0.4) !important;
         color: #ffffff !important;
         border-radius: 50% !important;
     }
 
     /* ---- Hero Banner ---- */
     .hero-banner {
-        background: linear-gradient(135deg, #38240D 0%, #713600 50%, #C05800 100%) !important;
-        color: #FDFBD4 !important;
+        background: linear-gradient(135deg, #6D3B07 0%, #6F4E37 40%, #D47E30 100%) !important;
+        color: #F5F5DC !important;
         padding: 2.2rem 2rem;
         border-radius: 18px;
-        box-shadow: 0 20px 30px -5px rgba(56, 36, 13, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 20px 32px -5px rgba(109, 59, 7, 0.55), 0 8px 12px -6px rgba(0, 0, 0, 0.4);
         margin-bottom: 1.8rem;
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(253, 251, 212, 0.25);
+        border: 1px solid rgba(245, 245, 220, 0.3);
     }
     .hero-banner::after {
         content: '';
         position: absolute;
         top: -50%;
         right: -10%;
-        width: 300px;
-        height: 300px;
-        background: rgba(253, 251, 212, 0.08);
+        width: 320px;
+        height: 320px;
+        background: rgba(245, 245, 220, 0.09);
         border-radius: 50%;
         pointer-events: none;
     }
@@ -886,13 +338,13 @@ def get_theme_css(theme: str) -> str:
         font-size: 2.2rem;
         font-weight: 800;
         margin-bottom: 0.5rem;
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
         letter-spacing: -0.02em;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
     .hero-subtitle {
         font-size: 1.05rem;
-        color: #f7eed0 !important;
+        color: #f7eed8 !important;
         max-width: 750px;
         line-height: 1.6;
         margin-bottom: 1.2rem;
@@ -900,8 +352,8 @@ def get_theme_css(theme: str) -> str:
 
     /* ---- Metric Cards ---- */
     .metric-card {
-        background: rgba(56, 36, 13, 0.75) !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        background: rgba(40, 21, 9, 0.8) !important;
+        border: 1.5px solid rgba(212, 126, 48, 0.35) !important;
         backdrop-filter: blur(10px);
         border-radius: 14px;
         padding: 1.2rem 1.5rem;
@@ -910,55 +362,55 @@ def get_theme_css(theme: str) -> str:
     }
     .metric-card:hover {
         transform: translateY(-3px);
-        border-color: #C05800 !important;
-        box-shadow: 0 8px 20px rgba(113, 54, 0, 0.3);
+        border-color: #D47E30 !important;
+        box-shadow: 0 8px 22px rgba(109, 59, 7, 0.4);
     }
     .metric-val {
         font-size: 2rem;
         font-weight: 800;
-        color: #C05800 !important;
-        text-shadow: 0 0 12px rgba(192, 88, 0, 0.3);
+        color: #D47E30 !important;
+        text-shadow: 0 0 14px rgba(212, 126, 48, 0.35);
     }
     .metric-lbl {
         font-size: 0.85rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #e5d8b8 !important;
+        letter-spacing: 0.06em;
+        color: #F5F5DC !important;
         font-weight: 600;
     }
 
     /* ---- Custom Cards ---- */
     .custom-card {
-        background: #2b1b0d !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.28) !important;
+        background: #241207 !important;
+        border: 1.5px solid rgba(212, 126, 48, 0.3) !important;
         border-radius: 16px;
         padding: 1.4rem;
         margin-bottom: 1.2rem;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-        color: #FDFBD4 !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        color: #F5F5DC !important;
         transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
     .custom-card:hover {
-        border-color: #C05800 !important;
-        box-shadow: 0 8px 24px rgba(113, 54, 0, 0.25);
+        border-color: #D47E30 !important;
+        box-shadow: 0 8px 26px rgba(109, 59, 7, 0.35);
     }
     .custom-card p, .custom-card strong, .custom-card b {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
     }
     .card-heading {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
         font-weight: 700;
     }
     .card-subtext {
-        color: #d4c8a8 !important;
+        color: #d6cab3 !important;
     }
     .card-meta, .card-meta span {
-        color: #e5d8b8 !important;
+        color: #ebdcc0 !important;
     }
     .card-title {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
         margin-bottom: 0.8rem;
         display: flex;
         align-items: center;
@@ -967,23 +419,23 @@ def get_theme_css(theme: str) -> str:
 
     /* ---- Chat Bubbles ---- */
     .chat-bubble-teacher {
-        background: #38240D !important;
-        border: 1px solid #713600 !important;
+        background: #331a0b !important;
+        border: 1px solid #6F4E37 !important;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
     .chat-bubble-parent {
-        background: #2b1709 !important;
-        border: 1px solid #C05800 !important;
+        background: #241105 !important;
+        border: 1px solid #D47E30 !important;
         border-radius: 14px;
         padding: 1rem;
         margin-bottom: 0.8rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
 
-    /* ---- Badges (Dark Mode: High Contrast) ---- */
+    /* ---- Badges (Spiced Mocha) ---- */
     .badge {
         display: inline-block !important;
         padding: 0.35rem 0.75rem !important;
@@ -994,38 +446,38 @@ def get_theme_css(theme: str) -> str:
         letter-spacing: 0.05em !important;
     }
     .badge-info, .custom-card .badge-info {
-        background-color: #FDFBD4 !important;
-        color: #38240D !important;
+        background-color: #F5F5DC !important;
+        color: #231408 !important;
     }
     .badge-info *, .custom-card .badge-info * {
-        color: #38240D !important;
+        color: #231408 !important;
     }
     .badge-healthy, .custom-card .badge-healthy {
-        background-color: rgba(192, 88, 0, 0.35) !important;
-        color: #FDFBD4 !important;
-        border: 1px solid #C05800 !important;
+        background-color: rgba(212, 126, 48, 0.28) !important;
+        color: #F5F5DC !important;
+        border: 1px solid #D47E30 !important;
     }
     .badge-healthy *, .custom-card .badge-healthy * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
     }
     .badge-underweight, .custom-card .badge-underweight {
-        background-color: rgba(253, 251, 212, 0.22) !important;
-        color: #FDFBD4 !important;
-        border: 1px solid rgba(253, 251, 212, 0.5) !important;
+        background-color: rgba(245, 245, 220, 0.2) !important;
+        color: #F5F5DC !important;
+        border: 1px solid rgba(245, 245, 220, 0.5) !important;
     }
     .badge-underweight *, .custom-card .badge-underweight * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
     }
     .badge-overweight, .custom-card .badge-overweight {
-        background-color: rgba(224, 110, 20, 0.4) !important;
-        color: #FDFBD4 !important;
-        border: 1px solid #e06d06 !important;
+        background-color: rgba(212, 126, 48, 0.4) !important;
+        color: #F5F5DC !important;
+        border: 1px solid #D47E30 !important;
     }
     .badge-overweight *, .custom-card .badge-overweight * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
     }
     .badge-obese, .custom-card .badge-obese {
-        background-color: rgba(239, 68, 68, 0.3) !important;
+        background-color: rgba(220, 38, 38, 0.3) !important;
         color: #fecaca !important;
         border: 1px solid #ef4444 !important;
     }
@@ -1033,21 +485,21 @@ def get_theme_css(theme: str) -> str:
         color: #fecaca !important;
     }
     .badge-stunted, .custom-card .badge-stunted {
-        background-color: rgba(113, 54, 0, 0.6) !important;
-        color: #FDFBD4 !important;
-        border: 1px solid #713600 !important;
+        background-color: rgba(111, 78, 55, 0.6) !important;
+        color: #F5F5DC !important;
+        border: 1px solid #6F4E37 !important;
     }
     .badge-stunted *, .custom-card .badge-stunted * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
     }
 
     .section-header {
         font-size: 1.5rem;
         font-weight: 800;
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
         margin-top: 1rem;
         margin-bottom: 1.2rem;
-        border-left: 5px solid #C05800;
+        border-left: 5px solid #D47E30;
         padding-left: 0.85rem;
         text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
@@ -1055,10 +507,10 @@ def get_theme_css(theme: str) -> str:
     .stDataFrame {
         border-radius: 12px;
         overflow: hidden;
-        border: 1px solid rgba(192, 88, 0, 0.25);
+        border: 1px solid rgba(212, 126, 48, 0.25);
     }
 
-    /* ---- Buttons (Dark Mode: High Contrast) ---- */
+    /* ---- Buttons (Spiced Mocha Design) ---- */
     button,
     [data-testid*="stBaseButton"],
     div.stButton > button,
@@ -1070,52 +522,52 @@ def get_theme_css(theme: str) -> str:
         transition: all 0.2s cubic-bezier(.4,0,.2,1) !important;
     }
 
-    /* Secondary Buttons (Dark) */
+    /* Secondary Buttons */
     button[kind="secondary"],
     button[kind="secondaryFormSubmit"],
     [data-testid="stBaseButton-secondary"],
     [data-testid="stBaseButton-secondaryFormSubmit"],
     div.stButton > button:not([kind="primary"]) {
-        background-color: #2b1b0d !important;
-        background: #2b1b0d !important;
-        color: #FDFBD4 !important;
-        border: 1.5px solid rgba(192, 88, 0, 0.45) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+        background-color: #241207 !important;
+        background: #241207 !important;
+        color: #F5F5DC !important;
+        border: 1.5px solid rgba(212, 126, 48, 0.4) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
     }
     button[kind="secondary"] *,
     button[kind="secondaryFormSubmit"] *,
     [data-testid="stBaseButton-secondary"] *,
     [data-testid="stBaseButton-secondaryFormSubmit"] *,
     div.stButton > button:not([kind="primary"]) * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
     }
     button[kind="secondary"]:hover,
     button[kind="secondaryFormSubmit"]:hover,
     [data-testid="stBaseButton-secondary"]:hover,
     [data-testid="stBaseButton-secondaryFormSubmit"]:hover {
-        background-color: rgba(192, 88, 0, 0.3) !important;
-        background: rgba(192, 88, 0, 0.3) !important;
-        border-color: #C05800 !important;
+        background-color: rgba(212, 126, 48, 0.28) !important;
+        background: rgba(212, 126, 48, 0.28) !important;
+        border-color: #D47E30 !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 14px rgba(192, 88, 0, 0.35) !important;
+        box-shadow: 0 4px 16px rgba(212, 126, 48, 0.35) !important;
     }
     button[kind="secondary"]:hover *,
     button[kind="secondaryFormSubmit"]:hover * {
         color: #ffffff !important;
     }
 
-    /* Primary & Form Submit & Download Buttons (Dark) */
+    /* Primary & Form Submit & Download Buttons */
     button[kind="primary"],
     button[kind="primaryFormSubmit"],
     [data-testid="stBaseButton-primary"],
     [data-testid="stBaseButton-primaryFormSubmit"],
     div[data-testid="stFormSubmitButton"] > button,
     [data-testid="stDownloadButton"] > button {
-        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
-        background-color: #C05800 !important;
-        border: 1px solid rgba(253, 251, 212, 0.5) !important;
-        color: #FDFBD4 !important;
-        box-shadow: 0 4px 18px rgba(192, 88, 0, 0.5) !important;
+        background: linear-gradient(135deg, #6D3B07 0%, #D47E30 100%) !important;
+        background-color: #D47E30 !important;
+        border: 1px solid rgba(245, 245, 220, 0.5) !important;
+        color: #F5F5DC !important;
+        box-shadow: 0 4px 18px rgba(212, 126, 48, 0.5) !important;
         font-weight: 700 !important;
     }
     button[kind="primary"] *,
@@ -1124,7 +576,7 @@ def get_theme_css(theme: str) -> str:
     [data-testid="stBaseButton-primaryFormSubmit"] *,
     div[data-testid="stFormSubmitButton"] > button *,
     [data-testid="stDownloadButton"] > button * {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
         font-weight: 700 !important;
     }
     button[kind="primary"]:hover,
@@ -1133,15 +585,15 @@ def get_theme_css(theme: str) -> str:
     [data-testid="stBaseButton-primaryFormSubmit"]:hover,
     div[data-testid="stFormSubmitButton"] > button:hover,
     [data-testid="stDownloadButton"] > button:hover {
-        background: linear-gradient(135deg, #8a4200 0%, #d96502 100%) !important;
-        box-shadow: 0 6px 24px rgba(192, 88, 0, 0.7) !important;
+        background: linear-gradient(135deg, #85480a 0%, #e68b3c 100%) !important;
+        box-shadow: 0 6px 24px rgba(212, 126, 48, 0.7) !important;
         transform: translateY(-1px);
     }
 
-    /* ---- Sidebar Navigation Alignment (Dark) ---- */
+    /* ---- Sidebar Navigation Alignment ---- */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #180e05 0%, #261509 50%, #38240D 100%) !important;
-        border-right: 1px solid rgba(192, 88, 0, 0.25) !important;
+        background: linear-gradient(180deg, #150b04 0%, #201006 50%, #2c1609 100%) !important;
+        border-right: 1px solid rgba(212, 126, 48, 0.25) !important;
     }
     section[data-testid="stSidebar"] div.stButton > button {
         width: 100% !important;
@@ -1154,7 +606,7 @@ def get_theme_css(theme: str) -> str:
         border-radius: 10px !important;
         border: 1px solid transparent !important;
         background: transparent !important;
-        color: #f7eed0 !important;
+        color: #e5dac1 !important;
         font-size: 0.92rem !important;
         font-weight: 600 !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
@@ -1171,25 +623,25 @@ def get_theme_css(theme: str) -> str:
         align-items: center !important;
         justify-content: flex-start !important;
         font-size: 0.92rem !important;
-        color: #f7eed0 !important;
+        color: #e5dac1 !important;
     }
     section[data-testid="stSidebar"] div.stButton > button:hover {
-        background: rgba(192, 88, 0, 0.2) !important;
-        border-color: rgba(192, 88, 0, 0.45) !important;
-        color: #FDFBD4 !important;
+        background: rgba(212, 126, 48, 0.2) !important;
+        border-color: rgba(212, 126, 48, 0.45) !important;
+        color: #F5F5DC !important;
         transform: translateX(3px) !important;
     }
     /* Active Nav Button */
     section[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
-        border: 1px solid #FDFBD4 !important;
-        color: #FDFBD4 !important;
-        box-shadow: 0 4px 18px rgba(192, 88, 0, 0.5) !important;
+        background: linear-gradient(135deg, #6D3B07 0%, #D47E30 100%) !important;
+        border: 1px solid #F5F5DC !important;
+        color: #F5F5DC !important;
+        box-shadow: 0 4px 18px rgba(212, 126, 48, 0.5) !important;
         font-weight: 700 !important;
     }
     section[data-testid="stSidebar"] div.stButton > button[kind="primary"] p,
     section[data-testid="stSidebar"] div.stButton > button[kind="primary"] div {
-        color: #FDFBD4 !important;
+        color: #F5F5DC !important;
         font-weight: 700 !important;
     }
 
@@ -1198,7 +650,7 @@ def get_theme_css(theme: str) -> str:
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.12em;
-        color: #bfa882 !important;
+        color: #c7b897 !important;
         padding: 0.6rem 0.4rem 0.35rem;
     }
 
@@ -1214,8 +666,8 @@ def get_theme_css(theme: str) -> str:
     }
 
     .att-progress-bg {
-        background: #1a0f06;
-        border: 1px solid rgba(192, 88, 0, 0.2);
+        background: #190e05;
+        border: 1px solid rgba(212, 126, 48, 0.2);
         border-radius: 9999px;
         height: 8px;
         width: 100%;
@@ -1228,9 +680,9 @@ def get_theme_css(theme: str) -> str:
         transition: width 0.4s ease;
     }
 </style>
-        """
+    """
 
-st.markdown(get_theme_css(st.session_state.app_theme), unsafe_allow_html=True)
+st.markdown(get_theme_css(), unsafe_allow_html=True)
 
 # ------------------- AI MODEL & WHO BACKEND ENGINE -------------------
 class GrowthNet(nn.Module):
@@ -1860,21 +1312,16 @@ def get_pdf_bytes_for_report(rep):
 if st.session_state.current_user is None:
     with st.sidebar:
         st.markdown(f"""
-        <div style="display: flex; align-items: center; gap: 0.85rem; padding: 0.6rem 0 0.4rem;">
-            <div style="background: #FDFBD4; padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border: 1px solid #C05800;">
+        <div style="display: flex; align-items: center; gap: 0.85rem; padding: 0.6rem 0 0.8rem;">
+            <div style="background: #F5F5DC; padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border: 1px solid #D47E30;">
                 <img src="data:image/png;base64,{LOGO_B64}" width="38" height="38" style="border-radius: 8px; object-fit: contain;" alt="Growth Advisor Logo">
             </div>
             <div>
-                <div style="font-size: 1.25rem; font-weight: 800; color: {'#FDFBD4' if st.session_state.app_theme == 'dark' else '#38240D'}; letter-spacing: -0.02em; line-height: 1.15;">Growth Advisor</div>
-                <div style="font-size: 0.72rem; color: #C05800; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: #F5F5DC; letter-spacing: -0.02em; line-height: 1.15;">Growth Advisor</div>
+                <div style="font-size: 0.72rem; color: #D47E30; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        cur_theme = st.session_state.get("app_theme", "dark")
-        theme_btn_label = "☀️ Switch to Light Theme" if cur_theme == "dark" else "🌙 Switch to Dark Theme"
-        if st.button(theme_btn_label, key="auth_theme_btn", use_container_width=True):
-            st.session_state.app_theme = "light" if cur_theme == "dark" else "dark"
-            st.rerun()
 
     st.markdown(f"""
     <div class="hero-banner">
@@ -1884,7 +1331,7 @@ if st.session_state.current_user is None:
             </div>
             <div>
                 <div class="hero-title" style="margin-bottom: 0.1rem; line-height: 1.15;">Growth Advisor</div>
-                <div style="color: #FDFBD4; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
+                <div style="color: #F5F5DC; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
             </div>
         </div>
         <div class="hero-subtitle">
@@ -2284,30 +1731,23 @@ user_role = current_user.get("role", "")
 
 st.sidebar.markdown(f"""
 <div style="display: flex; align-items: center; gap: 0.85rem; padding: 0.6rem 0 0.4rem;">
-    <div style="background: #FDFBD4; padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border: 1px solid #C05800;">
+    <div style="background: #F5F5DC; padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border: 1px solid #D47E30;">
         <img src="data:image/png;base64,{LOGO_B64}" width="38" height="38" style="border-radius: 8px; object-fit: contain;" alt="Growth Advisor Logo">
     </div>
     <div>
-        <div style="font-size: 1.32rem; font-weight: 800; color: #FDFBD4; letter-spacing: -0.02em; line-height: 1.15;">Growth Advisor</div>
-        <div style="font-size: 0.72rem; color: #C05800; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
+        <div style="font-size: 1.32rem; font-weight: 800; color: #F5F5DC; letter-spacing: -0.02em; line-height: 1.15;">Growth Advisor</div>
+        <div style="font-size: 0.72rem; color: #D47E30; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 st.sidebar.markdown(f"""
-<div style="background: linear-gradient(135deg, rgba(113,54,0,0.45), rgba(192,88,0,0.2)); border: 1px solid rgba(192,88,0,0.35); padding: 0.75rem 0.9rem; border-radius: 12px; margin: 0.8rem 0 0.5rem;">
-    <div style="font-weight: 700; color: {'#FDFBD4' if st.session_state.app_theme == 'dark' else '#38240D'}; font-size: 0.95rem;">👤 {current_user['fullName']}</div>
-    <div style="font-size: 0.8rem; color: #C05800; margin-top: 0.15rem; font-weight: 600;">Role: <b style="color:{'#FDFBD4' if st.session_state.app_theme == 'dark' else '#38240D'};">{user_role}</b></div>
-    {f'<div style="font-size: 0.8rem; color: #713600; margin-top: 0.1rem;">Roll No: <b style="color:#C05800;">{current_user["childId"]}</b></div>' if user_role == 'Parent' else ''}
+<div style="background: linear-gradient(135deg, rgba(109,59,7,0.5), rgba(212,126,48,0.25)); border: 1.5px solid rgba(212,126,48,0.4); padding: 0.85rem 1rem; border-radius: 14px; margin: 0.6rem 0 0.8rem; box-shadow: 0 4px 14px rgba(0,0,0,0.25);">
+    <div style="font-weight: 700; color: #F5F5DC; font-size: 0.96rem;">👤 {current_user['fullName']}</div>
+    <div style="font-size: 0.82rem; color: #D47E30; margin-top: 0.2rem; font-weight: 600;">Role: <b style="color: #F5F5DC;">{user_role}</b></div>
+    {f'<div style="font-size: 0.82rem; color: #ebdcc0; margin-top: 0.15rem;">Roll No: <b style="color:#D47E30;">{current_user["childId"]}</b></div>' if user_role == 'Parent' else ''}
 </div>
 """, unsafe_allow_html=True)
-
-# Theme Toggle Button
-cur_theme = st.session_state.get("app_theme", "dark")
-theme_btn_label = "☀️ Switch to Light Theme" if cur_theme == "dark" else "🌙 Switch to Dark Theme"
-if st.sidebar.button(theme_btn_label, key="theme_toggle_btn", use_container_width=True):
-    st.session_state.app_theme = "light" if cur_theme == "dark" else "dark"
-    st.rerun()
 
 # ---- Navigation menu with styled buttons ----
 if "active_nav" not in st.session_state:
