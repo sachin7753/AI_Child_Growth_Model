@@ -667,6 +667,99 @@ def load_students_data():
             for i in range(1, 31)
         ])
 
+def save_students_data(df: pd.DataFrame) -> bool:
+    """Persist students DataFrame directly to Excel and refresh cache."""
+    try:
+        df.to_excel(ATTENDANCE_FILE, index=False)
+        load_students_data.clear()
+        return True
+    except Exception as e:
+        st.error(f"Failed to save student record to Excel: {e}")
+        return False
+
+def compute_child_attendance(child_id: str, attendance_store: dict) -> dict:
+    """Calculate cumulative attendance metrics for a child across all recorded school days."""
+    cid_u = str(child_id).strip().upper()
+    total_days = 0
+    present_days = 0
+    date_history = []
+
+    for date_str in sorted(attendance_store.keys(), reverse=True):
+        records = attendance_store.get(date_str, {})
+        status = None
+        for k, v in records.items():
+            if str(k).strip().upper() == cid_u:
+                status = v
+                break
+        
+        if status is not None:
+            total_days += 1
+            if status == "Present":
+                present_days += 1
+            date_history.append({"Date": date_str, "Status": status})
+
+    absent_days = total_days - present_days
+    pct = (present_days / total_days * 100.0) if total_days > 0 else 0.0
+
+    if total_days == 0:
+        badge_cls = "badge-info"
+        badge_text = "No Records"
+        status_label = "No Data"
+    elif pct >= 90:
+        badge_cls = "badge-healthy"
+        badge_text = f"{pct:.1f}% (Excellent)"
+        status_label = "Excellent"
+    elif pct >= 75:
+        badge_cls = "badge-overweight"
+        badge_text = f"{pct:.1f}% (Good)"
+        status_label = "Good"
+    else:
+        badge_cls = "badge-obese"
+        badge_text = f"{pct:.1f}% (Low <75%)"
+        status_label = "At Risk"
+
+    return {
+        "total_days": total_days,
+        "present_days": present_days,
+        "absent_days": absent_days,
+        "percentage": pct,
+        "badge_cls": badge_cls,
+        "badge_text": badge_text,
+        "status_label": status_label,
+        "history": date_history
+    }
+
+def compute_class_attendance_summary(students_df: pd.DataFrame, attendance_store: dict) -> pd.DataFrame:
+    """Build class-wide cumulative attendance roster for all students."""
+    summary_list = []
+    for _, row in students_df.iterrows():
+        cid = str(row['Child ID'])
+        cname = str(row['Child Name'])
+        stats = compute_child_attendance(cid, attendance_store)
+        summary_list.append({
+            "Child ID": cid,
+            "Child Name": cname,
+            "Total Days Logged": stats["total_days"],
+            "Present Days": stats["present_days"],
+            "Absent Days": stats["absent_days"],
+            "Attendance %": f"{stats['percentage']:.1f}%",
+            "Raw Pct": stats["percentage"],
+            "Status": stats["status_label"],
+            "Parent Contact": row.get("Phone Number", "N/A"),
+            "Location": row.get("Place", "N/A")
+        })
+    return pd.DataFrame(summary_list)
+
+def reset_all_attendance_records() -> bool:
+    """Reset all attendance records for a new academic year."""
+    try:
+        st.session_state.attendance_store = {}
+        save_json_store(ATTENDANCE_JSON, {})
+        return True
+    except Exception as e:
+        st.error(f"Error resetting attendance records: {e}")
+        return False
+
 @st.cache_data
 def load_food_recommendations():
     if os.path.exists(FOOD_RECOMMENDATIONS_FILE):
@@ -1153,6 +1246,7 @@ if user_role == "Teacher":
     nav_options = [
         ("🏠 Home / Overview",        "home"),
         ("👶 Children Directory",     "children"),
+        ("🎓 Student Database (CRUD)", "student_crud"),
         ("📋 Attendance Sheet",       "attendance"),
         ("⚡ Generate Report",        "generate"),
         ("📄 Reports Repository",     "reports"),
@@ -1166,6 +1260,7 @@ if user_role == "Teacher":
     nav_label_map = {
         "home":       "🏠 Home / Overview",
         "children":   "👶 Children Directory",
+        "student_crud": "🎓 Student Database (CRUD)",
         "attendance": "📋 Teacher Attendance Sheet",
         "generate":   "⚡ Generate Growth Report",
         "reports":    "📄 Student Reports Repository",
@@ -1301,51 +1396,306 @@ if user_role == "Teacher":
                 </div>
                 """, unsafe_allow_html=True)
 
+    # 2.5 Student Database Management (CRUD)
+    elif nav_selection == "🎓 Student Database (CRUD)":
+        st.markdown("<div class='section-header'>🎓 Student Database & Registry Management (CRUD)</div>", unsafe_allow_html=True)
+        st.caption("Add new students, update existing records, delete former students, and manage the student registry.")
+
+        crud_tab1, crud_tab2, crud_tab3, crud_tab4 = st.tabs([
+            "➕ Add New Student",
+            "✏️ Edit / Update Student",
+            "🗑️ Delete Student",
+            "📋 Master Registry & Export"
+        ])
+
+        with crud_tab1:
+            st.markdown("### ➕ Register New Student into Database")
+            with st.form("add_student_form", clear_on_submit=True):
+                existing_ids = [str(x).strip().upper() for x in students_df['Child ID'].tolist()]
+                max_num = 0
+                for cid_val in existing_ids:
+                    nums = re.findall(r"\d+", cid_val)
+                    if nums:
+                        max_num = max(max_num, int(nums[0]))
+                suggested_id = f"C{max_num+1:03d}"
+
+                col_as1, col_as2 = st.columns(2)
+                with col_as1:
+                    new_cid = st.text_input("Child ID (Roll No)", value=suggested_id, help="Must be unique")
+                    new_cname = st.text_input("Child Full Name *", placeholder="e.g. Diya Sharma")
+                with col_as2:
+                    new_pname = st.text_input("Parent / Guardian Name *", placeholder="e.g. Rajesh Sharma")
+                    new_place = st.text_input("Location / Place", value="Coimbatore")
+
+                new_phone = st.text_input("Contact Phone Number *", placeholder="e.g. 9876543210")
+                submit_add = st.form_submit_button("➕ Save Student to Database", use_container_width=True)
+
+            if submit_add:
+                new_cid_clean = str(new_cid).strip().upper()
+                new_cname_clean = str(new_cname).strip()
+                new_pname_clean = str(new_pname).strip()
+                new_phone_clean = str(new_phone).strip()
+
+                if not new_cid_clean or not new_cname_clean or not new_pname_clean:
+                    st.error("❌ Child ID, Child Name, and Parent Name are required.")
+                elif new_cid_clean in existing_ids:
+                    st.error(f"❌ Student ID '{new_cid_clean}' already exists! Please choose a unique ID.")
+                else:
+                    new_row = pd.DataFrame([{
+                        "Child ID": new_cid_clean,
+                        "Child Name": new_cname_clean,
+                        "Parent Name": new_pname_clean,
+                        "Place": new_place.strip() or "Coimbatore",
+                        "Phone Number": int(new_phone_clean) if new_phone_clean.isdigit() else new_phone_clean
+                    }])
+                    updated_students_df = pd.concat([students_df, new_row], ignore_index=True)
+                    if save_students_data(updated_students_df):
+                        parent_username = new_cid_clean.lower()
+                        if parent_username not in st.session_state.users_store:
+                            st.session_state.users_store[parent_username] = {
+                                "password": hash_password("parent123"),
+                                "fullName": new_pname_clean,
+                                "role": "Parent",
+                                "childId": new_cid_clean,
+                                "email": f"{parent_username}@school.com"
+                            }
+                            save_json_store(USERS_JSON, st.session_state.users_store)
+                        st.success(f"🎉 Successfully added student **{new_cname_clean} ({new_cid_clean})** to database!")
+                        st.rerun()
+
+        with crud_tab2:
+            st.markdown("### ✏️ Edit & Update Existing Student Details")
+            st_list = {f"{r['Child Name']} ({r['Child ID']})": r['Child ID'] for _, r in students_df.iterrows()}
+            selected_edit_label = st.selectbox("Select Student to Edit", options=list(st_list.keys()), key="crud_select_edit")
+            selected_edit_cid = st_list[selected_edit_label]
+            curr_row = students_df[students_df['Child ID'].astype(str) == str(selected_edit_cid)].iloc[0]
+
+            with st.form("edit_student_form"):
+                col_es1, col_es2 = st.columns(2)
+                with col_es1:
+                    edit_cid_disp = st.text_input("Child ID (Locked)", value=str(curr_row['Child ID']), disabled=True)
+                    edit_cname = st.text_input("Child Full Name", value=str(curr_row['Child Name']))
+                with col_es2:
+                    edit_pname = st.text_input("Parent / Guardian Name", value=str(curr_row['Parent Name']))
+                    edit_place = st.text_input("Location / Place", value=str(curr_row.get('Place', 'Coimbatore')))
+                
+                edit_phone = st.text_input("Contact Phone Number", value=str(curr_row.get('Phone Number', '')))
+                submit_edit = st.form_submit_button("💾 Save Updates to Database", use_container_width=True)
+
+            if submit_edit:
+                students_df.loc[students_df['Child ID'].astype(str) == str(selected_edit_cid), 'Child Name'] = edit_cname.strip()
+                students_df.loc[students_df['Child ID'].astype(str) == str(selected_edit_cid), 'Parent Name'] = edit_pname.strip()
+                students_df.loc[students_df['Child ID'].astype(str) == str(selected_edit_cid), 'Place'] = edit_place.strip()
+                students_df.loc[students_df['Child ID'].astype(str) == str(selected_edit_cid), 'Phone Number'] = int(edit_phone.strip()) if edit_phone.strip().isdigit() else edit_phone.strip()
+                
+                if save_students_data(students_df):
+                    st.success(f"✅ Successfully updated details for **{edit_cname} ({selected_edit_cid})**!")
+                    st.rerun()
+
+        with crud_tab3:
+            st.markdown("### 🗑️ Delete Student from Database")
+            selected_del_label = st.selectbox("Select Student to Delete", options=list(st_list.keys()), key="crud_select_del")
+            selected_del_cid = st_list[selected_del_label]
+            del_row = students_df[students_df['Child ID'].astype(str) == str(selected_del_cid)].iloc[0]
+
+            st.warning(f"⚠️ You are about to delete **{del_row['Child Name']} (ID: {selected_del_cid})** from the school database. This will permanently remove their records.")
+            del_confirm = st.checkbox(f"I confirm that I want to permanently delete {del_row['Child Name']} ({selected_del_cid})")
+            
+            if st.button("🗑️ Permanently Delete Student", type="primary", disabled=not del_confirm):
+                pruned_df = students_df[students_df['Child ID'].astype(str) != str(selected_del_cid)].copy()
+                if save_students_data(pruned_df):
+                    for dt, att_map in st.session_state.attendance_store.items():
+                        if selected_del_cid in att_map:
+                            del att_map[selected_del_cid]
+                    save_json_store(ATTENDANCE_JSON, st.session_state.attendance_store)
+                    st.success(f"🗑️ Student {del_row['Child Name']} ({selected_del_cid}) was deleted.")
+                    st.rerun()
+
+        with crud_tab4:
+            st.markdown(f"### 📋 Master Student Directory ({len(students_df)} Students Enrolled)")
+            st.dataframe(students_df, use_container_width=True, hide_index=True)
+            
+            excel_buf = BytesIO()
+            students_df.to_excel(excel_buf, index=False)
+            st.download_button(
+                label="📥 Download Master Student Registry (Excel)",
+                data=excel_buf.getvalue(),
+                file_name="Child_Attendance_Data_Updated.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
+
     # 3. Teacher Attendance Sheet
     elif nav_selection == "📋 Teacher Attendance Sheet":
-        st.markdown("<div class='section-header'>📋 Daily Student Attendance Sheet</div>", unsafe_allow_html=True)
-        selected_date = st.date_input("Select Date", datetime.now()).strftime("%Y-%m-%d")
-        date_records = st.session_state.attendance_store.get(selected_date, {})
+        st.markdown("<div class='section-header'>📋 Student Attendance Management & Historical Tracking</div>", unsafe_allow_html=True)
 
-        with st.form("teacher_att_form"):
-            st.subheader(f"Mark Attendance for {selected_date}")
-            attendance_inputs = {}
-            cols = st.columns(2)
-            for idx, row in students_df.iterrows():
-                cid = str(row['Child ID'])
-                cname = str(row['Child Name'])
-                prev_status = date_records.get(cid, "Present")
-                c = cols[idx % 2]
-                status = c.radio(
-                    f"{cname} ({cid})",
-                    options=["Present", "Absent"],
-                    index=0 if prev_status == "Present" else 1,
-                    key=f"att_{selected_date}_{cid}",
-                    horizontal=True
+        att_summary_df = compute_class_attendance_summary(students_df, st.session_state.attendance_store)
+        total_dates_logged = len(st.session_state.attendance_store)
+        
+        total_all_records = sum(len(d) for d in st.session_state.attendance_store.values())
+        total_all_presents = sum(sum(1 for v in d.values() if v == "Present") for d in st.session_state.attendance_store.values())
+        class_overall_pct = (total_all_presents / total_all_records * 100.0) if total_all_records > 0 else 0.0
+        low_att_count = len(att_summary_df[att_summary_df["Raw Pct"] < 75.0]) if total_dates_logged > 0 else 0
+
+        tm1, tm2, tm3, tm4 = st.columns(4)
+        tm1.metric("Enrolled Students", len(students_df))
+        tm2.metric("Total Days Logged", f"{total_dates_logged} Days")
+        tm3.metric("Class Attendance Rate", f"{class_overall_pct:.1f}%")
+        tm4.metric("At-Risk Students (<75%)", f"{low_att_count} Students", delta=f"-{low_att_count}" if low_att_count > 0 else "0", delta_color="inverse")
+
+        st.markdown("---")
+
+        att_tab1, att_tab2, att_tab3 = st.tabs([
+            "📝 Daily Attendance Sheet",
+            "📊 Cumulative Class Attendance Roster",
+            "📅 Master Date-by-Date Matrix"
+        ])
+
+        with att_tab1:
+            st.markdown("### 📝 Mark / Review Daily Attendance")
+            
+            c_date1, c_date2 = st.columns([1.5, 2.5])
+            with c_date1:
+                selected_date = st.date_input("Select School Date", datetime.now(), key="att_date_picker").strftime("%Y-%m-%d")
+            
+            date_records = st.session_state.attendance_store.get(selected_date, {})
+            
+            with c_date2:
+                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+                qa_col1, qa_col2 = st.columns(2)
+                mark_all_p = qa_col1.button("🟢 Mark All Present", use_container_width=True)
+                mark_all_a = qa_col2.button("🔴 Mark All Absent", use_container_width=True)
+                
+                if mark_all_p:
+                    for _, r in students_df.iterrows():
+                        date_records[str(r['Child ID'])] = "Present"
+                    st.session_state.attendance_store[selected_date] = date_records
+                    save_json_store(ATTENDANCE_JSON, st.session_state.attendance_store)
+                    st.success(f"✅ Marked all {len(students_df)} students as Present for {selected_date}!")
+                    st.rerun()
+
+                if mark_all_a:
+                    for _, r in students_df.iterrows():
+                        date_records[str(r['Child ID'])] = "Absent"
+                    st.session_state.attendance_store[selected_date] = date_records
+                    save_json_store(ATTENDANCE_JSON, st.session_state.attendance_store)
+                    st.warning(f"⚠️ Marked all {len(students_df)} students as Absent for {selected_date}.")
+                    st.rerun()
+
+            with st.expander("🔄 Academic Year Attendance Reset", expanded=False):
+                st.markdown("Clear all recorded attendance logs to begin a fresh academic session.")
+                confirm_reset = st.checkbox("I understand that this will erase all historical attendance records for the new school year.", key="chk_reset_att")
+                if st.button("🚨 Reset All Attendance for New Academic Year", type="primary", disabled=not confirm_reset):
+                    if reset_all_attendance_records():
+                        st.success("🎉 All attendance records have been reset for the new academic year!")
+                        st.rerun()
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            with st.form("teacher_daily_att_form"):
+                st.markdown(f"#### 📋 Marking Sheet for **{selected_date}**")
+                attendance_inputs = {}
+                att_cols = st.columns(2)
+                
+                for idx, row in students_df.iterrows():
+                    cid = str(row['Child ID'])
+                    cname = str(row['Child Name'])
+                    prev_status = date_records.get(cid, "Present")
+                    child_stats = compute_child_attendance(cid, st.session_state.attendance_store)
+                    
+                    bar_color = "#10b981" if child_stats['percentage'] >= 90 else ("#f59e0b" if child_stats['percentage'] >= 75 else "#ef4444")
+                    
+                    c = att_cols[idx % 2]
+                    with c:
+                        st.markdown(f"""
+                        <div class="custom-card" style="padding: 0.85rem 1rem; margin-bottom: 0.6rem; border-left: 4px solid {bar_color};">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; font-size: 1rem; color: #f8fafc;">{cname} <span style="font-size: 0.8rem; color: #94a3b8;">({cid})</span></span>
+                                <span class="badge {child_stats['badge_cls']}">{child_stats['badge_text']}</span>
+                            </div>
+                            <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.3rem;">
+                                Logged: <b>{child_stats['present_days']}/{child_stats['total_days']} Days</b> | 📞 {row.get('Phone Number', 'N/A')}
+                            </div>
+                            <div class="att-progress-bg">
+                                <div class="att-progress-bar" style="width: {child_stats['percentage']}%; background: {bar_color};"></div>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        status = st.radio(
+                            f"Status for {cname}",
+                            options=["Present", "Absent"],
+                            index=0 if prev_status == "Present" else 1,
+                            key=f"att_in_{selected_date}_{cid}",
+                            horizontal=True,
+                            label_visibility="collapsed"
+                        )
+                        attendance_inputs[cid] = status
+
+                submit_att = st.form_submit_button(f"💾 Save Attendance for {selected_date}", use_container_width=True)
+
+            if submit_att:
+                st.session_state.attendance_store[selected_date] = attendance_inputs
+                save_json_store(ATTENDANCE_JSON, st.session_state.attendance_store)
+                st.success(f"✅ Attendance records saved for {selected_date}!")
+                st.rerun()
+
+            if selected_date in st.session_state.attendance_store:
+                records = st.session_state.attendance_store[selected_date]
+                t_count = len(records)
+                p_count = sum(1 for v in records.values() if v == "Present")
+                a_count = t_count - p_count
+                d_pct = (p_count / t_count * 100) if t_count > 0 else 0
+                st.markdown(f"**Day Summary ({selected_date}):** Present: **{p_count}** | Absent: **{a_count}** | Rate: **{d_pct:.1f}%**")
+
+        with att_tab2:
+            st.markdown("### 📊 Cumulative Class Attendance Roster")
+            st.caption("Individual cumulative attendance percentages calculated across all recorded school dates.")
+            
+            filter_status = st.selectbox("Filter by Status", ["All Students", "Excellent (≥90%)", "Good (75–89%)", "At Risk (<75%)"])
+            
+            display_roster = att_summary_df.copy()
+            if filter_status == "Excellent (≥90%)":
+                display_roster = display_roster[display_roster["Raw Pct"] >= 90.0]
+            elif filter_status == "Good (75–89%)":
+                display_roster = display_roster[(display_roster["Raw Pct"] >= 75.0) & (display_roster["Raw Pct"] < 90.0)]
+            elif filter_status == "At Risk (<75%)":
+                display_roster = display_roster[display_roster["Raw Pct"] < 75.0]
+
+            st.dataframe(
+                display_roster[["Child ID", "Child Name", "Total Days Logged", "Present Days", "Absent Days", "Attendance %", "Status", "Parent Contact", "Location"]],
+                use_container_width=True,
+                hide_index=True
+            )
+
+        with att_tab3:
+            st.markdown("### 📅 Master Date-by-Date Attendance Matrix")
+            all_dates = sorted(st.session_state.attendance_store.keys(), reverse=True)
+            if all_dates:
+                matrix_rows = []
+                for _, r in students_df.iterrows():
+                    cid = str(r['Child ID'])
+                    cname = str(r['Child Name'])
+                    row_data = {"Child ID": cid, "Child Name": cname}
+                    for d in all_dates:
+                        row_data[d] = st.session_state.attendance_store.get(d, {}).get(cid, "—")
+                    stats = compute_child_attendance(cid, st.session_state.attendance_store)
+                    row_data["Cumulative %"] = f"{stats['percentage']:.1f}%"
+                    matrix_rows.append(row_data)
+                
+                matrix_df = pd.DataFrame(matrix_rows)
+                st.dataframe(matrix_df, use_container_width=True, hide_index=True)
+                
+                csv_bytes = matrix_df.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="📥 Download Full Attendance Matrix (CSV)",
+                    data=csv_bytes,
+                    file_name="Master_Attendance_Matrix.csv",
+                    mime="text/csv",
+                    use_container_width=True
                 )
-                attendance_inputs[cid] = status
-
-            submit_att = st.form_submit_button("💾 Save Attendance Records", use_container_width=True)
-
-        if submit_att:
-            st.session_state.attendance_store[selected_date] = attendance_inputs
-            save_json_store(ATTENDANCE_JSON, st.session_state.attendance_store)
-            st.success(f"✅ Attendance saved successfully for {selected_date}!")
-            st.rerun()
-
-        if selected_date in st.session_state.attendance_store:
-            records = st.session_state.attendance_store[selected_date]
-            total = len(records)
-            present = sum(1 for v in records.values() if v == "Present")
-            absent = total - present
-            pct = (present / total * 100) if total > 0 else 0
-
-            st.markdown("### 📊 Attendance Metrics")
-            m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Total Students", total)
-            m2.metric("Present", present)
-            m3.metric("Absent", absent)
-            m4.metric("Attendance Rate", f"{pct:.1f}%")
+            else:
+                st.info("No attendance records logged yet. Use the Daily Attendance Sheet tab to log records.")
 
     # 4. Generate Report Page (Teacher)
     elif nav_selection == "⚡ Generate Growth Report":
@@ -1864,31 +2214,41 @@ else:
 
     # 2. My Child's Attendance & Stats
     elif nav_selection == "📋 My Child's Attendance & Stats":
-        st.markdown(f"<div class='section-header'>📋 Attendance Record & Percentage for {child_name} ({parent_cid})</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='section-header'>📋 Attendance Record & Performance for {child_name} ({parent_cid})</div>", unsafe_allow_html=True)
 
-        child_att_log = []
-        for date_str, recs in st.session_state.attendance_store.items():
-            if parent_cid in recs:
-                child_att_log.append({"Date": date_str, "Status": recs[parent_cid]})
+        p_stats = compute_child_attendance(parent_cid, st.session_state.attendance_store)
 
-        if child_att_log:
-            df_att = pd.DataFrame(child_att_log).sort_values(by="Date", ascending=False)
-            total_days = len(df_att)
-            present_days = len(df_att[df_att["Status"] == "Present"])
-            absent_days = total_days - present_days
-            att_pct = (present_days / total_days * 100) if total_days > 0 else 0
-
+        if p_stats["total_days"] > 0:
             m1, m2, m3, m4 = st.columns(4)
-            m1.metric("Total Recorded Days", total_days)
-            m2.metric("Present Days", present_days)
-            m3.metric("Absent Days", absent_days)
-            m4.metric("Attendance Percentage", f"{att_pct:.1f}%")
+            m1.metric("Total School Days", p_stats["total_days"])
+            m2.metric("Days Present", p_stats["present_days"])
+            m3.metric("Days Absent", p_stats["absent_days"])
+            m4.metric("Attendance Score", f"{p_stats['percentage']:.1f}%")
 
-            st.progress(att_pct / 100.0)
-            st.markdown("### 📜 Attendance History Log")
-            st.dataframe(df_att, use_container_width=True, hide_index=True)
+            bar_color = "#10b981" if p_stats['percentage'] >= 90 else ("#f59e0b" if p_stats['percentage'] >= 75 else "#ef4444")
+            
+            st.markdown(f"""
+            <div class="custom-card" style="margin-top: 1rem; border-left: 4px solid {bar_color};">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 1.1rem; font-weight: 700; color: #f8fafc;">📊 Overall Cumulative Attendance: {p_stats['percentage']:.1f}%</span>
+                    <span class="badge {p_stats['badge_cls']}">{p_stats['badge_text']}</span>
+                </div>
+                <div class="att-progress-bg" style="height: 10px; margin-top: 10px;">
+                    <div class="att-progress-bar" style="width: {p_stats['percentage']}%; background: {bar_color};"></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if p_stats['percentage'] < 75.0:
+                st.warning(f"⚠️ **Attendance Notice**: {child_name}'s cumulative attendance is currently **{p_stats['percentage']:.1f}%**, which is below the recommended 75% threshold. Please ensure regular attendance.")
+            else:
+                st.success(f"🌟 **Great Attendance Record!** {child_name} has maintained a **{p_stats['percentage']:.1f}%** attendance rate.")
+
+            st.markdown("### 📜 Complete Date-by-Date Attendance Log")
+            df_parent_att = pd.DataFrame(p_stats["history"])
+            st.dataframe(df_parent_att, use_container_width=True, hide_index=True)
         else:
-            st.info(f"No attendance records logged yet for {child_name} ({parent_cid}). Please check back after teacher marks attendance.")
+            st.info(f"No attendance records logged yet for {child_name} ({parent_cid}). Please check back after the class teacher submits the daily attendance sheet.")
 
     # 3. Parent Reports Download Module
     elif nav_selection == "📄 My Child's Growth Reports":
