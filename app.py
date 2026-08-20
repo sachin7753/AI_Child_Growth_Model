@@ -238,6 +238,62 @@ def get_theme_css(theme: str) -> str:
         font-weight: 600 !important;
     }
 
+    /* ---- Datepicker & Calendar (Light) ---- */
+    div[data-testid="stDateInput"] div[data-baseweb="input"],
+    div[data-testid="stDateInput"] input {
+        background-color: #ffffff !important;
+        color: #38240D !important;
+        border-color: rgba(192, 88, 0, 0.35) !important;
+    }
+    div[data-baseweb="popover"],
+    div[data-baseweb="popover"] > div,
+    div[data-baseweb="calendar"],
+    div[role="dialog"] {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        color: #38240D !important;
+        border: 1.5px solid rgba(192, 88, 0, 0.35) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 30px rgba(113, 54, 0, 0.15) !important;
+    }
+    div[data-baseweb="calendar"] * {
+        color: #38240D !important;
+    }
+    div[data-baseweb="calendar"] header,
+    div[data-baseweb="calendar"] header button {
+        color: #38240D !important;
+        background: transparent !important;
+    }
+    div[data-baseweb="calendar"] [role="columnheader"] {
+        color: #C05800 !important;
+        font-weight: 800 !important;
+    }
+    div[data-baseweb="calendar"] [role="gridcell"] {
+        color: #38240D !important;
+        background: transparent !important;
+    }
+    div[data-baseweb="calendar"] [role="gridcell"] > div {
+        color: #38240D !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="calendar"] [aria-disabled="true"],
+    div[data-baseweb="calendar"] [aria-disabled="true"] * {
+        color: rgba(56, 36, 13, 0.35) !important;
+    }
+    div[data-baseweb="calendar"] [aria-selected="true"],
+    div[data-baseweb="calendar"] [aria-selected="true"] * {
+        background-color: #C05800 !important;
+        background: #C05800 !important;
+        color: #ffffff !important;
+        border-radius: 50% !important;
+        font-weight: 800 !important;
+    }
+    div[data-baseweb="calendar"] [role="gridcell"]:hover > div {
+        background-color: rgba(192, 88, 0, 0.15) !important;
+        color: #C05800 !important;
+        border-radius: 50% !important;
+    }
+
     /* ---- Hero Banner (Light) ---- */
     .hero-banner {
         background: linear-gradient(135deg, #713600 0%, #a34b00 50%, #C05800 100%) !important;
@@ -715,6 +771,62 @@ def get_theme_css(theme: str) -> str:
     div[role="radiogroup"] label p, div[data-testid="stCheckbox"] label p {
         color: #FDFBD4 !important;
         font-weight: 600 !important;
+    }
+
+    /* ---- Datepicker & Calendar (Dark Mode: High Contrast) ---- */
+    div[data-testid="stDateInput"] div[data-baseweb="input"],
+    div[data-testid="stDateInput"] input {
+        background-color: #2b1b0d !important;
+        color: #FDFBD4 !important;
+        border-color: rgba(192, 88, 0, 0.35) !important;
+    }
+    div[data-baseweb="popover"],
+    div[data-baseweb="popover"] > div,
+    div[data-baseweb="calendar"],
+    div[role="dialog"] {
+        background-color: #2b1b0d !important;
+        background: #2b1b0d !important;
+        color: #FDFBD4 !important;
+        border: 1.5px solid #C05800 !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+    }
+    div[data-baseweb="calendar"] * {
+        color: #FDFBD4 !important;
+    }
+    div[data-baseweb="calendar"] header,
+    div[data-baseweb="calendar"] header button {
+        color: #FDFBD4 !important;
+        background: transparent !important;
+    }
+    div[data-baseweb="calendar"] [role="columnheader"] {
+        color: #C05800 !important;
+        font-weight: 800 !important;
+    }
+    div[data-baseweb="calendar"] [role="gridcell"] {
+        color: #FDFBD4 !important;
+        background: transparent !important;
+    }
+    div[data-baseweb="calendar"] [role="gridcell"] > div {
+        color: #FDFBD4 !important;
+        font-weight: 600 !important;
+    }
+    div[data-baseweb="calendar"] [aria-disabled="true"],
+    div[data-baseweb="calendar"] [aria-disabled="true"] * {
+        color: rgba(253, 251, 212, 0.3) !important;
+    }
+    div[data-baseweb="calendar"] [aria-selected="true"],
+    div[data-baseweb="calendar"] [aria-selected="true"] * {
+        background-color: #C05800 !important;
+        background: #C05800 !important;
+        color: #ffffff !important;
+        border-radius: 50% !important;
+        font-weight: 800 !important;
+    }
+    div[data-baseweb="calendar"] [role="gridcell"]:hover > div {
+        background-color: rgba(192, 88, 0, 0.35) !important;
+        color: #ffffff !important;
+        border-radius: 50% !important;
     }
 
     /* ---- Hero Banner ---- */
