@@ -117,8 +117,13 @@ except Exception:
 if not os.path.exists(TEMP_REPORTS_DIR):
     os.makedirs(TEMP_REPORTS_DIR, exist_ok=True)
 
-# ------------------- CUSTOM CSS STYLING (CHOCOLATE TRUFFLE THEME) -------------------
-st.markdown("""
+# ------------------- THEME STATE & DYNAMIC CSS STYLING -------------------
+if "app_theme" not in st.session_state:
+    st.session_state.app_theme = "dark"
+
+def get_theme_css(theme: str) -> str:
+    if theme == "light":
+        return """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     
@@ -127,8 +132,258 @@ st.markdown("""
     }
 
     .stApp {
-        background: radial-gradient(circle at 50% 0%, #2b1a0d 0%, #170e06 100%);
+        background: linear-gradient(180deg, #fcf9f2 0%, #f4ede0 100%) !important;
+        color: #38240D !important;
+    }
+
+    .main .block-container {
+        padding-top: 1.8rem;
+        padding-bottom: 3rem;
+        max-width: 1200px;
+    }
+
+    /* ---- Hero Banner (Light) ---- */
+    .hero-banner {
+        background: linear-gradient(135deg, #713600 0%, #a34b00 50%, #C05800 100%);
         color: #FDFBD4;
+        padding: 2.2rem 2rem;
+        border-radius: 18px;
+        box-shadow: 0 15px 28px -5px rgba(113, 54, 0, 0.25);
+        margin-bottom: 1.8rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(253, 251, 212, 0.35);
+    }
+    .hero-banner::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(253, 251, 212, 0.12);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .hero-title {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        color: #FDFBD4;
+        letter-spacing: -0.02em;
+    }
+    .hero-subtitle {
+        font-size: 1.05rem;
+        color: #fef8dd;
+        max-width: 750px;
+        line-height: 1.6;
+        margin-bottom: 1.2rem;
+    }
+
+    /* ---- Metric Cards (Light) ---- */
+    .metric-card {
+        background: #ffffff;
+        border: 1px solid rgba(192, 88, 0, 0.22);
+        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.06);
+        border-radius: 14px;
+        padding: 1.2rem 1.5rem;
+        text-align: center;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-3px);
+        border-color: #C05800;
+        box-shadow: 0 8px 20px rgba(113, 54, 0, 0.15);
+    }
+    .metric-val {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #C05800;
+    }
+    .metric-lbl {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #713600;
+        font-weight: 700;
+    }
+
+    /* ---- Custom Cards (Light) ---- */
+    .custom-card {
+        background: #ffffff;
+        border: 1px solid rgba(192, 88, 0, 0.2);
+        border-radius: 16px;
+        padding: 1.4rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 16px rgba(113, 54, 0, 0.08);
+        color: #38240D;
+    }
+    .custom-card:hover {
+        border-color: #C05800;
+    }
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #38240D;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* ---- Chat Bubbles (Light) ---- */
+    .chat-bubble-teacher {
+        background: #fdf6ec;
+        border: 1px solid #713600;
+        border-radius: 14px;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        color: #38240D;
+    }
+    .chat-bubble-parent {
+        background: #fef9f0;
+        border: 1px solid #C05800;
+        border-radius: 14px;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        color: #38240D;
+    }
+
+    /* ---- Badges ---- */
+    .badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .badge-healthy { background-color: #e6f4ea; color: #137333; border: 1px solid #34a853; }
+    .badge-underweight { background-color: #fef7e0; color: #b06000; border: 1px solid #f9ab00; }
+    .badge-overweight { background-color: #fef0e6; color: #c05800; border: 1px solid #c05800; }
+    .badge-obese { background-color: #fce8e6; color: #c5221f; border: 1px solid #ea4335; }
+    .badge-stunted { background-color: #f3e8fd; color: #7627bb; border: 1px solid #9333ea; }
+    .badge-info { background-color: #38240D; color: #FDFBD4; }
+
+    .section-header {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #38240D;
+        margin-top: 1rem;
+        margin-bottom: 1.2rem;
+        border-left: 5px solid #C05800;
+        padding-left: 0.85rem;
+    }
+
+    .stDataFrame {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(192, 88, 0, 0.2);
+    }
+
+    /* ---- Sidebar Navigation Alignment (Light) ---- */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #fdfbf7 0%, #f6eee0 100%) !important;
+        border-right: 1px solid rgba(192, 88, 0, 0.2) !important;
+    }
+    section[data-testid="stSidebar"] div.stButton > button {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        padding: 0.62rem 0.95rem !important;
+        border-radius: 10px !important;
+        border: 1px solid transparent !important;
+        background: transparent !important;
+        color: #38240D !important;
+        font-size: 0.92rem !important;
+        font-weight: 600 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        transition: all 0.2s cubic-bezier(.4,0,.2,1) !important;
+        margin: 2px 0 !important;
+        min-height: 42px !important;
+        box-sizing: border-box !important;
+    }
+    section[data-testid="stSidebar"] div.stButton > button p,
+    section[data-testid="stSidebar"] div.stButton > button div {
+        text-align: left !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        font-size: 0.92rem !important;
+        color: #38240D !important;
+    }
+    section[data-testid="stSidebar"] div.stButton > button:hover {
+        background: rgba(192, 88, 0, 0.12) !important;
+        border-color: rgba(192, 88, 0, 0.3) !important;
+        color: #713600 !important;
+        transform: translateX(3px) !important;
+    }
+    /* Active Nav Button */
+    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
+        border: 1px solid #713600 !important;
+        color: #FDFBD4 !important;
+        box-shadow: 0 4px 14px rgba(113, 54, 0, 0.25) !important;
+        font-weight: 700 !important;
+    }
+    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] p,
+    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] div {
+        color: #FDFBD4 !important;
+        font-weight: 700 !important;
+    }
+    .sidebar-nav-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #713600;
+        padding: 0.6rem 0.4rem 0.35rem;
+    }
+
+    .logout-btn > button {
+        background: rgba(239, 68, 68, 0.1) !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        color: #dc2626 !important;
+    }
+    .logout-btn > button:hover {
+        background: rgba(239, 68, 68, 0.2) !important;
+        border-color: #dc2626 !important;
+        color: #991b1b !important;
+    }
+
+    .att-progress-bg {
+        background: #f0e6d6;
+        border: 1px solid rgba(192, 88, 0, 0.2);
+        border-radius: 9999px;
+        height: 8px;
+        width: 100%;
+        overflow: hidden;
+        margin-top: 6px;
+    }
+    .att-progress-bar {
+        height: 100%;
+        border-radius: 9999px;
+        transition: width 0.4s ease;
+    }
+</style>
+        """
+    else:  # DARK MODE (CHOCOLATE TRUFFLE)
+        return """
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .stApp {
+        background: radial-gradient(circle at 50% 0%, #2b1a0d 0%, #170e06 100%) !important;
+        color: #FDFBD4 !important;
     }
 
     .main .block-container {
@@ -248,7 +503,7 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    /* ---- Badges (Chocolate Truffle Palette) ---- */
+    /* ---- Badges ---- */
     .badge {
         display: inline-block;
         padding: 0.35rem 0.75rem;
@@ -282,61 +537,70 @@ st.markdown("""
         border: 1px solid rgba(192, 88, 0, 0.25);
     }
 
-    /* ---- Sidebar Navigation Styling (Espresso Truffle) ---- */
+    /* ---- Sidebar Navigation Alignment (Dark) ---- */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #180e05 0%, #261509 50%, #38240D 100%);
-        border-right: 1px solid rgba(192, 88, 0, 0.25);
+        background: linear-gradient(180deg, #180e05 0%, #261509 50%, #38240D 100%) !important;
+        border-right: 1px solid rgba(192, 88, 0, 0.25) !important;
     }
-    section[data-testid="stSidebar"] .stButton > button {
-        width: 100%;
-        text-align: left;
-        padding: 0.65rem 1rem;
-        border-radius: 12px;
-        border: 1px solid transparent;
-        background: transparent;
-        color: #f7eed0;
-        font-size: 0.92rem;
-        font-weight: 600;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        transition: all 0.25s cubic-bezier(.4,0,.2,1);
-        margin-bottom: 2px;
-        cursor: pointer;
-        letter-spacing: 0.01em;
+    section[data-testid="stSidebar"] div.stButton > button {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        padding: 0.62rem 0.95rem !important;
+        border-radius: 10px !important;
+        border: 1px solid transparent !important;
+        background: transparent !important;
+        color: #f7eed0 !important;
+        font-size: 0.92rem !important;
+        font-weight: 600 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        transition: all 0.2s cubic-bezier(.4,0,.2,1) !important;
+        margin: 2px 0 !important;
+        min-height: 42px !important;
+        box-sizing: border-box !important;
     }
-    section[data-testid="stSidebar"] .stButton > button:hover {
-        background: rgba(192, 88, 0, 0.2);
-        border-color: rgba(192, 88, 0, 0.45);
-        color: #FDFBD4;
-        transform: translateX(4px);
+    section[data-testid="stSidebar"] div.stButton > button p,
+    section[data-testid="stSidebar"] div.stButton > button div {
+        text-align: left !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        font-size: 0.92rem !important;
+        color: #f7eed0 !important;
     }
-    section[data-testid="stSidebar"] .stButton > button:active {
-        transform: translateX(4px) scale(0.98);
+    section[data-testid="stSidebar"] div.stButton > button:hover {
+        background: rgba(192, 88, 0, 0.2) !important;
+        border-color: rgba(192, 88, 0, 0.45) !important;
+        color: #FDFBD4 !important;
+        transform: translateX(3px) !important;
     }
-    section[data-testid="stSidebar"] .stButton > button:focus:not(:focus-visible) {
-        box-shadow: none;
-    }
-    /* Active nav item styling — Chocolate Truffle Gold Gradient */
-    .nav-active > button {
+    /* Active Nav Button */
+    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
         background: linear-gradient(135deg, #713600 0%, #C05800 100%) !important;
-        border-color: #FDFBD4 !important;
+        border: 1px solid #FDFBD4 !important;
         color: #FDFBD4 !important;
         box-shadow: 0 4px 18px rgba(192, 88, 0, 0.5) !important;
         font-weight: 700 !important;
     }
-    .nav-active > button:hover {
-        transform: translateX(0px) !important;
+    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] p,
+    section[data-testid="stSidebar"] div.stButton > button[kind="primary"] div {
+        color: #FDFBD4 !important;
+        font-weight: 700 !important;
     }
-    /* Sidebar nav label */
+
     .sidebar-nav-label {
-        font-size: 0.7rem;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.12em;
         color: #bfa882;
         padding: 0.6rem 0.4rem 0.35rem;
-        margin-top: 0.2rem;
     }
-    /* Logout button override */
+
     .logout-btn > button {
         background: rgba(239, 68, 68, 0.12) !important;
         border: 1px solid rgba(239, 68, 68, 0.35) !important;
@@ -346,10 +610,8 @@ st.markdown("""
         background: rgba(239, 68, 68, 0.3) !important;
         border-color: #ef4444 !important;
         color: #ffffff !important;
-        transform: translateX(0) !important;
     }
 
-    /* ---- Attendance Progress Bars ---- */
     .att-progress-bg {
         background: #1a0f06;
         border: 1px solid rgba(192, 88, 0, 0.2);
@@ -365,7 +627,9 @@ st.markdown("""
         transition: width 0.4s ease;
     }
 </style>
-""", unsafe_allow_html=True)
+        """
+
+st.markdown(get_theme_css(st.session_state.app_theme), unsafe_allow_html=True)
 
 # ------------------- AI MODEL & WHO BACKEND ENGINE -------------------
 class GrowthNet(nn.Module):
@@ -993,6 +1257,24 @@ def get_pdf_bytes_for_report(rep):
 
 # ------------------- AUTHENTICATION SCREEN -------------------
 if st.session_state.current_user is None:
+    with st.sidebar:
+        st.markdown(f"""
+        <div style="display: flex; align-items: center; gap: 0.85rem; padding: 0.6rem 0 0.4rem;">
+            <div style="background: #FDFBD4; padding: 4px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.4); border: 1px solid #C05800;">
+                <img src="data:image/png;base64,{LOGO_B64}" width="38" height="38" style="border-radius: 8px; object-fit: contain;" alt="Growth Advisor Logo">
+            </div>
+            <div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: {'#FDFBD4' if st.session_state.app_theme == 'dark' else '#38240D'}; letter-spacing: -0.02em; line-height: 1.15;">Growth Advisor</div>
+                <div style="font-size: 0.72rem; color: #C05800; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        cur_theme = st.session_state.get("app_theme", "dark")
+        theme_btn_label = "☀️ Switch to Light Theme" if cur_theme == "dark" else "🌙 Switch to Dark Theme"
+        if st.button(theme_btn_label, key="auth_theme_btn", use_container_width=True):
+            st.session_state.app_theme = "light" if cur_theme == "dark" else "dark"
+            st.rerun()
+
     st.markdown(f"""
     <div class="hero-banner">
         <div style="display: flex; align-items: center; gap: 1.1rem; margin-bottom: 0.9rem;">
@@ -1001,7 +1283,7 @@ if st.session_state.current_user is None:
             </div>
             <div>
                 <div class="hero-title" style="margin-bottom: 0.1rem; line-height: 1.15;">Growth Advisor</div>
-                <div style="color: #a5b4fc; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
+                <div style="color: #FDFBD4; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">AI-POWERED PORTAL</div>
             </div>
         </div>
         <div class="hero-subtitle">
@@ -1412,12 +1694,19 @@ st.sidebar.markdown(f"""
 """, unsafe_allow_html=True)
 
 st.sidebar.markdown(f"""
-<div style="background: linear-gradient(135deg, rgba(113,54,0,0.45), rgba(192,88,0,0.2)); border: 1px solid rgba(192,88,0,0.35); padding: 0.75rem 0.9rem; border-radius: 12px; margin: 0.8rem 0;">
-    <div style="font-weight: 700; color: #FDFBD4; font-size: 0.95rem;">👤 {current_user['fullName']}</div>
-    <div style="font-size: 0.8rem; color: #C05800; margin-top: 0.15rem; font-weight: 600;">Role: <b style="color:#FDFBD4;">{user_role}</b></div>
-    {f'<div style="font-size: 0.8rem; color: #FDFBD4; margin-top: 0.1rem;">Roll No: <b style="color:#C05800;">{current_user["childId"]}</b></div>' if user_role == 'Parent' else ''}
+<div style="background: linear-gradient(135deg, rgba(113,54,0,0.45), rgba(192,88,0,0.2)); border: 1px solid rgba(192,88,0,0.35); padding: 0.75rem 0.9rem; border-radius: 12px; margin: 0.8rem 0 0.5rem;">
+    <div style="font-weight: 700; color: {'#FDFBD4' if st.session_state.app_theme == 'dark' else '#38240D'}; font-size: 0.95rem;">👤 {current_user['fullName']}</div>
+    <div style="font-size: 0.8rem; color: #C05800; margin-top: 0.15rem; font-weight: 600;">Role: <b style="color:{'#FDFBD4' if st.session_state.app_theme == 'dark' else '#38240D'};">{user_role}</b></div>
+    {f'<div style="font-size: 0.8rem; color: #713600; margin-top: 0.1rem;">Roll No: <b style="color:#C05800;">{current_user["childId"]}</b></div>' if user_role == 'Parent' else ''}
 </div>
 """, unsafe_allow_html=True)
+
+# Theme Toggle Button
+cur_theme = st.session_state.get("app_theme", "dark")
+theme_btn_label = "☀️ Switch to Light Theme" if cur_theme == "dark" else "🌙 Switch to Dark Theme"
+if st.sidebar.button(theme_btn_label, key="theme_toggle_btn", use_container_width=True):
+    st.session_state.app_theme = "light" if cur_theme == "dark" else "dark"
+    st.rerun()
 
 # ---- Navigation menu with styled buttons ----
 if "active_nav" not in st.session_state:
@@ -1488,14 +1777,10 @@ st.sidebar.markdown('<div class="sidebar-nav-label">Navigation</div>', unsafe_al
 
 for label, key in nav_options:
     is_active = (st.session_state.active_nav == key)
-    container = st.sidebar.container()
-    if is_active:
-        container.markdown('<div class="nav-active">', unsafe_allow_html=True)
-    if container.button(label, key=f"nav_{key}", use_container_width=True):
+    btn_type = "primary" if is_active else "secondary"
+    if st.sidebar.button(label, key=f"nav_{key}", type=btn_type, use_container_width=True):
         st.session_state.active_nav = key
         st.rerun()
-    if is_active:
-        container.markdown('</div>', unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
 
